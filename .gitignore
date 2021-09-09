@@ -1,3 +1,10 @@
+### Assembler ###
+*.exe
+*.o
+*.obj
+*.bc
+
+### Java ###
 # Compiled class file
 *.class
 
