@@ -2,6 +2,7 @@
 
 	backgroundColor:	.word 0x00000000		
 	wallColor:		.word 0x00007bff
+	pointColor:		.word 0x00ffffff
 	
 	# agent identifies which element (player or enemy) the function is handing
 	# 0 is the player
@@ -1058,7 +1059,40 @@ DrawRadar:
 	lw $a2, wallColor
 	li $a3, 58
 	jal DrawVerticalLine
+		
 	
+DrawPlayerPoints:
+
+	li $a0, 26
+	li $a1, 39
+	lw $a2, pointColor
+	jal DrawPoint
+	
+	li $a0, 28
+	li $a1, 39
+	lw $a2, pointColor
+	jal DrawPoint
+	
+	li $a0, 30
+	li $a1, 39
+	lw $a2, pointColor
+	jal DrawPoint
+	
+	li $a0, 32
+	li $a1, 39
+	lw $a2, pointColor
+	jal DrawPoint
+	
+	li $a0, 34
+	li $a1, 39
+	lw $a2, pointColor
+	jal DrawPoint
+	
+	li $a0, 36
+	li $a1, 39
+	lw $a2, pointColor
+	jal DrawPoint
+		
 	
 # Wait and read buttons
 Begin_standby:	
