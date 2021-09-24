@@ -1028,38 +1028,42 @@ DrawMap:
 	jal DrawVerticalLine
 	
 	
+DrawRadar:
+
+	# Horizontal lines
+
+	# First level
+	li $a0, 18
+	li $a1, 42
+	lw $a2, wallColor
+	li $a3, 44
+	jal DrawHorizontalLine
 	
+	# Second level
+	li $a0, 18
+	li $a1, 58
+	lw $a2, wallColor
+	li $a3, 44
+	jal DrawHorizontalLine
 	
+	# Vertical lines
+	li $a0, 18
+	li $a1, 42
+	lw $a2, wallColor
+	li $a3, 58
+	jal DrawVerticalLine
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	li $a0, 44
+	li $a1, 42
+	lw $a2, wallColor
+	li $a3, 58
+	jal DrawVerticalLine
 	
 	
 # Wait and read buttons
 Begin_standby:	
 
-	li $t0, 0x00000002			# load 25 into the counter for a ~50 milisec standby
+	li $t0, 0x00000002 # load 25 into the counter for a ~50 milisec standby
 
 		
 Standby:
