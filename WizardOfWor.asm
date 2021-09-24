@@ -1,7 +1,7 @@
 .data	
 
 	backgroundColor:	.word 0x00000000		
-	blueColor:		.word 0x00007bff
+	wallColor:		.word 0x00007bff
 	
 	# agent identifies which element (player or enemy) the function is handing
 	# 0 is the player
@@ -379,31 +379,31 @@ NewGame:
 		# Line	
 		li $a0, 2
 		li $a1, 31
-		lw $a2, blueColor
+		lw $a2, wallColor
 		li $a3, 61
 		jal DrawHorizontalLine
 		
 		li $a0, 1
 		li $a1, 32
-		lw $a2, blueColor
+		lw $a2, wallColor
 		li $a3, 62
 		jal DrawHorizontalLine
 		
 		li $a0, 0
 		li $a1, 33
-		lw $a2, blueColor
+		lw $a2, wallColor
 		li $a3, 63
 		jal DrawHorizontalLine
 				
 		li $a0, 1
 		li $a1, 34
-		lw $a2, blueColor
+		lw $a2, wallColor
 		li $a3, 62
 		jal DrawHorizontalLine
 		
 		li $a0, 2
 		li $a1, 35
-		lw $a2, blueColor
+		lw $a2, wallColor
 		li $a3, 61
 		jal DrawHorizontalLine
 				
@@ -836,12 +836,51 @@ BeginGame:
 	lw $s2, playerState
 	li $s3, 0
 	
-	#move $a0, $s0
-	#move $a1, $s1
-	#move $a2, $s2
-	#move $a3, $s3
 	
-	#jal DrawPlayer
+DrawMap:
+
+	# Horizantal lines
+	
+	# First level		
+	li $a0, 6
+	li $a1, 0
+	lw $a2, wallColor
+	li $a3, 57
+	jal DrawHorizontalLine
+	
+	# Second level
+	li $a0, 6
+	li $a1, 0
+	lw $a2, wallColor
+	li $a3, 57
+	jal DrawHorizontalLine
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 # Wait and read buttons
@@ -853,7 +892,7 @@ Begin_standby:
 Standby:
 
 	blez $t0, EndStandby
-	li $a0, 10	#
+	li $a0, 1	#
 	li $v0, 32	# pause for 10 milisec
 	syscall		#
 		
@@ -869,7 +908,8 @@ Standby:
 		
 EndStandby:	
 	
-	j BeginGame
+	#j BeginGame
+	j Begin_standby
 	
 		
 # KeyPressed chenges the player direction registers depending on the key pressed
@@ -937,8 +977,10 @@ KeyPressed:
 # $a1 is the new direction
 MoveAgent:
 
-	addi $sp, $sp, -4
+	addi $sp, $sp, -12
 	sw $ra , 0($sp)
+	sw $a0 , 4($sp)
+	sw $a1 , 8($sp)
 
 	MoveAgentPlayer:
 	
@@ -948,8 +990,14 @@ MoveAgent:
 		
 		beq $a1, $t1, AdvanceBlock
 		
-		jal ClearBoard		
+		lw $a0, playerPosX
+		lw $a1, playerPosY
 		
+		jal ErasePlayer
+		
+		lw $a0, 4($sp)
+		lw $a1, 8($sp)
+				
 		move $a3, $a1
 				
 		sw $a3, playerDir # store in memory the new direction						
@@ -990,7 +1038,7 @@ MoveAgent:
 	MoveAgentDone:
 	
 		lw $ra, 0($sp)
-		addi $sp, $sp, 4
+		addi $sp, $sp, 12
 	
 			
 # If it is possible, the agent agent will try to move forward with a given direction
@@ -1144,26 +1192,20 @@ DrawPlayer:
 	
 		bne $a3, 0, PlayerDown
 		
-		addi $a0, $a0, 1 # Offset a la derecha		
-		add $a3, $a0, 1
+		addi $a0, $a0, 1		
+		add $a3, $a0, 0
 		jal DrawHorizontalLine	
 		
 		lw $a0, 4($sp) # Recover x value
-		lw $a1, 8($sp) # Recover x value
+		lw $a1, 8($sp) # Recover y value
 		addi $a1, $a1, 1
-		addi $a3, $a0, 3
+		addi $a3, $a0, 2
 		jal DrawHorizontalLine
 				
 		lw $a0, 4($sp) # Recover x value
-		lw $a1, 8($sp) # Recover x value
+		lw $a1, 8($sp) # Recover y value
 		addi $a1, $a1, 2
-		addi $a3, $a0, 3
-		jal DrawHorizontalLine
-		
-		lw $a0, 4($sp) # Recover x value
-		lw $a1, 8($sp) # Recover x value
-		addi $a1, $a1, 3
-		addi $a3, $a0, 3
+		addi $a3, $a0, 2
 		jal DrawHorizontalLine
 				
 		j EndDrawPlayer
@@ -1172,26 +1214,21 @@ DrawPlayer:
 	
 		bne $a3, 1, PlayerLeft
 						
-		addi $a0, $a0, 1 # Offset a la derecha	
-		addi $a1, $a1, 3	
-		add $a3, $a0, 1
+		addi $a0, $a0, 1
+		addi $a1, $a1, 2	
+		add $a3, $a0, 0
 		jal DrawHorizontalLine	
 		
 		lw $a0, 4($sp) # Recover x value
-		lw $a1, 8($sp) # Recover x value
-		addi $a1, $a1, 1
-		addi $a3, $a0, 3
+		lw $a1, 8($sp) # Recover y value
+		addi $a1, $a1, 0
+		addi $a3, $a0, 2
 		jal DrawHorizontalLine
 				
 		lw $a0, 4($sp) # Recover x value
-		lw $a1, 8($sp) # Recover x value
-		addi $a1, $a1, 2
-		addi $a3, $a0, 3
-		jal DrawHorizontalLine
-		
-		lw $a0, 4($sp) # Recover x value
-		lw $a1, 8($sp) # Recover x value
-		addi $a3, $a0, 3
+		lw $a1, 8($sp) # Recover y value
+		addi $a1, $a1, 1
+		addi $a3, $a0, 2
 		jal DrawHorizontalLine
 				
 		j EndDrawPlayer
@@ -1200,27 +1237,21 @@ DrawPlayer:
 	
 		bne $a3, 2, PlayerRight
 				
-		addi $a0, $a0, 1 # Offset a la derecha		
-		add $a3, $a0, 2
+		addi $a0, $a0, 1		
+		add $a3, $a0, 1
 		jal DrawHorizontalLine	
 		
 		lw $a0, 4($sp) # Recover x value
-		lw $a1, 8($sp) # Recover x value
+		lw $a1, 8($sp) # Recover y value
 		addi $a1, $a1, 1
-		addi $a3, $a0, 3
+		addi $a3, $a0, 2
 		jal DrawHorizontalLine
 				
 		lw $a0, 4($sp) # Recover x value
-		lw $a1, 8($sp) # Recover x value
-		addi $a1, $a1, 2
-		addi $a3, $a0, 3
-		jal DrawHorizontalLine
-		
-		lw $a0, 4($sp) # Recover x value
-		lw $a1, 8($sp) # Recover x value
+		lw $a1, 8($sp) # Recover y value
 		addi $a0, $a0, 1
-		addi $a1, $a1, 3
-		addi $a3, $a0, 2
+		addi $a1, $a1, 2
+		addi $a3, $a0, 1
 		jal DrawHorizontalLine
 				
 		j EndDrawPlayer
@@ -1229,25 +1260,19 @@ DrawPlayer:
 	
 		bne $a3, 3, EndDrawPlayer
 						
-		add $a3, $a0, 2
+		add $a3, $a0, 1
 		jal DrawHorizontalLine	
 		
 		lw $a0, 4($sp) # Recover x value
-		lw $a1, 8($sp) # Recover x value
+		lw $a1, 8($sp) # Recover y value
 		addi $a1, $a1, 1
-		addi $a3, $a0, 3
+		addi $a3, $a0, 2
 		jal DrawHorizontalLine
 				
 		lw $a0, 4($sp) # Recover x value
-		lw $a1, 8($sp) # Recover x value
+		lw $a1, 8($sp) # Recover y value
 		addi $a1, $a1, 2
-		addi $a3, $a0, 3
-		jal DrawHorizontalLine
-		
-		lw $a0, 4($sp) # Recover x value
-		lw $a1, 8($sp) # Recover x value
-		addi $a1, $a1, 3
-		addi $a3, $a0, 2
+		addi $a3, $a0, 1
 		jal DrawHorizontalLine
 				
 	EndDrawPlayer:
