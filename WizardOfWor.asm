@@ -14,9 +14,9 @@
 	agent:			.word 0x00000000
 	
 	# Player
-	playerPosX:		.word 32
-	playerPosY:		.word 32
-	playerDir: 		.word 0x00000000
+	playerPosX:		.word 8
+	playerPosY:		.word 2
+	playerDir: 		.word 0x00000003
 	playerState:		.word 0x00ffc800
 	
 	# Enemy 1
@@ -782,40 +782,13 @@ NewGame:
 		jal DrawVerticalLine
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 SelectMode:
 
-	lw $t1, 0xFFFF0004		# check to see which key has been pressed
+	lw $t1, 0xFFFF0004 # check to see which key has been pressed
 	beq $t1, 0x00000031, BeginGame # 1 pressed
-		
-	li $a0, 250	#
-	li $v0, 32	# pause for 250 milisec
+			
+	li $a0, 75	#
+	li $v0, 32	# pause for 75 milisec
 	syscall		#
 		
 	j SelectMode    # Jump back to the top of the wait loop
@@ -831,11 +804,18 @@ BeginGame:
 	# $s1 stores player y position
 	# $s2 stores player color
 	# $s3 stores player direction
-	li $s0, 32
-	li $s1, 32
+	li $s0, 8
+	li $s1, 2
 	lw $s2, playerState
-	li $s3, 0
+	li $s3, 3
+					
+	lw $a0, playerPosX
+	lw $a1, playerPosY
+	lw $a2, playerState
+	lw $a3, playerDir
 	
+	jal DrawPlayer
+			
 	
 DrawMap:
 
@@ -845,17 +825,210 @@ DrawMap:
 	li $a0, 6
 	li $a1, 0
 	lw $a2, wallColor
-	li $a3, 57
+	li $a3, 56
 	jal DrawHorizontalLine
 	
 	# Second level
+	li $a0, 19
+	li $a1, 6
+	lw $a2, wallColor
+	li $a3, 23
+	jal DrawHorizontalLine
+	
+	li $a0, 29
+	li $a1, 6
+	lw $a2, wallColor
+	li $a3, 33
+	jal DrawHorizontalLine
+	
+	li $a0, 39
+	li $a1, 6
+	lw $a2, wallColor
+	li $a3, 43
+	jal DrawHorizontalLine
+	
+	# Third level
+	li $a0, 0
+	li $a1, 12
+	lw $a2, wallColor
+	li $a3, 6
+	jal DrawHorizontalLine
+	
+	li $a0, 24
+	li $a1, 12
+	lw $a2, wallColor
+	li $a3, 28
+	jal DrawHorizontalLine
+	
+	li $a0, 34
+	li $a1, 12
+	lw $a2, wallColor
+	li $a3, 38
+	jal DrawHorizontalLine
+	
+	li $a0, 56
+	li $a1, 12
+	lw $a2, wallColor
+	li $a3, 63
+	jal DrawHorizontalLine
+	
+	# Fourth level
+	li $a0, 0
+	li $a1, 18
+	lw $a2, wallColor
+	li $a3, 12
+	jal DrawHorizontalLine
+	
+	li $a0, 19
+	li $a1, 18
+	lw $a2, wallColor
+	li $a3, 23
+	jal DrawHorizontalLine
+	
+	li $a0, 29
+	li $a1, 18
+	lw $a2, wallColor
+	li $a3, 33
+	jal DrawHorizontalLine
+		
+	li $a0, 39
+	li $a1, 18
+	lw $a2, wallColor
+	li $a3, 43
+	jal DrawHorizontalLine
+	
+	li $a0, 50
+	li $a1, 18
+	lw $a2, wallColor
+	li $a3, 63
+	jal DrawHorizontalLine
+	
+	# Fiveth level
+	li $a0, 18
+	li $a1, 24
+	lw $a2, wallColor
+	li $a3, 28
+	jal DrawHorizontalLine
+	
+	li $a0, 34
+	li $a1, 24
+	lw $a2, wallColor
+	li $a3, 44
+	jal DrawHorizontalLine
+		
+	# Sixth level
+	li $a0, 12
+	li $a1, 30
+	lw $a2, wallColor
+	li $a3, 16
+	jal DrawHorizontalLine
+	
+	li $a0, 46
+	li $a1, 30
+	lw $a2, wallColor
+	li $a3, 49
+	jal DrawHorizontalLine
+		
+	# Seventh level
+	li $a0, 6
+	li $a1, 36
+	lw $a2, wallColor
+	li $a3, 56
+	jal DrawHorizontalLine
+	
+	# Vertical lines
+	
+	# First level
 	li $a0, 6
 	li $a1, 0
 	lw $a2, wallColor
-	li $a3, 57
-	jal DrawHorizontalLine
-
-
+	li $a3, 12
+	jal DrawVerticalLine
+		
+	li $a0, 56
+	li $a1, 0
+	lw $a2, wallColor
+	li $a3, 12
+	jal DrawVerticalLine
+	
+	# Second level
+	li $a0, 12
+	li $a1, 6
+	lw $a2, wallColor
+	li $a3, 12
+	jal DrawVerticalLine
+		
+	li $a0, 18
+	li $a1, 6
+	lw $a2, wallColor
+	li $a3, 18
+	jal DrawVerticalLine
+	
+	li $a0, 44
+	li $a1, 6
+	lw $a2, wallColor
+	li $a3, 18
+	jal DrawVerticalLine
+	
+	li $a0, 50
+	li $a1, 6
+	lw $a2, wallColor
+	li $a3, 12
+	jal DrawVerticalLine
+	
+	# Third level
+	li $a0, 6
+	li $a1, 18
+	lw $a2, wallColor
+	li $a3, 36
+	jal DrawVerticalLine
+		
+	li $a0, 56
+	li $a1, 18
+	lw $a2, wallColor
+	li $a3, 36
+	jal DrawVerticalLine
+								
+	# Fourth level	
+	li $a0, 12
+	li $a1, 24
+	lw $a2, wallColor
+	li $a3, 30
+	jal DrawVerticalLine
+		
+	li $a0, 28
+	li $a1, 24
+	lw $a2, wallColor
+	li $a3, 30
+	jal DrawVerticalLine
+	
+	li $a0, 34
+	li $a1, 24
+	lw $a2, wallColor
+	li $a3, 30
+	jal DrawVerticalLine
+	
+	li $a0, 50
+	li $a1, 24
+	lw $a2, wallColor
+	li $a3, 30
+	jal DrawVerticalLine
+	
+	# Fiveth level	
+	li $a0, 22
+	li $a1, 30
+	lw $a2, wallColor
+	li $a3, 36
+	jal DrawVerticalLine	
+	
+	li $a0, 40
+	li $a1, 30
+	lw $a2, wallColor
+	li $a3, 36
+	jal DrawVerticalLine
+	
+	
+	
 	
 	
 	
@@ -908,7 +1081,6 @@ Standby:
 		
 EndStandby:	
 	
-	#j BeginGame
 	j Begin_standby
 	
 		
@@ -1138,15 +1310,6 @@ TryMoveAgent:
 			
 			j TryMoveAgentDone
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 	TryMoveAgentEnemy1:
 	
 		bne $a0, 1, TryMoveAgentEnemy2
@@ -1295,36 +1458,27 @@ ErasePlayer:
 	lw $a0, 4($sp)
 	lw $a1, 8($sp)
 	li $a2, 0
-	addi $a3, $a0, 3	
+	addi $a3, $a0, 2	
 	jal DrawHorizontalLine	
 	
 	lw $a0, 4($sp)
 	lw $a1, 8($sp)
 	addi $a1, $a1, 1
 	li $a2, 0
-	addi $a3, $a0, 3	
+	addi $a3, $a0, 2	
 	jal DrawHorizontalLine	
 	
 	lw $a0, 4($sp)
 	lw $a1, 8($sp)
 	addi $a1, $a1, 2
 	li $a2, 0
-	addi $a3, $a0, 3	
+	addi $a3, $a0, 2	
 	jal DrawHorizontalLine	
-	
-	lw $a0, 4($sp)
-	lw $a1, 8($sp)
-	addi $a1, $a1, 3
-	li $a2, 0
-	addi $a3, $a0, 3
-	jal DrawHorizontalLine				
-				
-	EndErasePlayer:
-	
-		lw $ra, 0($sp)	
-		addi $sp, $sp, 12
 		
-		jr $ra																																
+	lw $ra, 0($sp)	
+	addi $sp, $sp, 12
+		
+	jr $ra																																
 																																				
 			
 # $a0 the x starting coordinate
