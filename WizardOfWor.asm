@@ -21,41 +21,40 @@
 	playerState:		.word 0x00ffc800
 	
 	# Enemy 1
-	enemy1PosX:		.word 0x00000000
-	enemy1PosY:		.word 0x00000000
-	enemy1Dir: 		.word 0x00000000
-	enemy1State:		.word 0x00fc0303
+	enemy1PosX:		.word 52
+	enemy1PosY:		.word 2
+	enemy1Dir: 		.word 0x00000002
+	enemy1State:		.word 0x00fc0303 # Red
 	
 	# Enemy 2
-	enemy2PosX:		.word 0x00000000
-	enemy2PosY:		.word 0x00000000
-	enemy2Dir: 		.word 0x00000000
-	enemy2State:		.word 0x00fc0303
+	enemy2PosX:		.word 52
+	enemy2PosY:		.word 20
+	enemy2Dir: 		.word 0x00000002
+	enemy2State:		.word 0x00ff8c00 # Orange
 	
 	# Enemy 3
-	enemy3PosX:		.word 0x00000000
-	enemy3PosY:		.word 0x00000000
+	enemy3PosX:		.word 18
+	enemy3PosY:		.word 32
 	enemy3Dir: 		.word 0x00000000
-	enemy3State:		.word 0x00fc0303
+	enemy3State:		.word 0x0011ff00 # Green
 	
 	# Enemy 4
-	enemy4PosX:		.word 0x00000000
-	enemy4PosY:		.word 0x00000000
+	enemy4PosX:		.word 30
+	enemy4PosY:		.word 32
 	enemy4Dir: 		.word 0x00000000
-	enemy4State:		.word 0x00fc0303
+	enemy4State:		.word 0x0000e5ff # Light blue
 	
 	# Enemy 5
-	enemy5PosX:		.word 0x00000000
-	enemy5PosY:		.word 0x00000000
+	enemy5PosX:		.word 42
+	enemy5PosY:		.word 32
 	enemy5Dir: 		.word 0x00000000
-	enemy5State:		.word 0x00fc0303
+	enemy5State:		.word 0x00a600ff # Purple
 	
 	# Enemy 6
-	enemy6PosX:		.word 0x00000000
-	enemy6PosY:		.word 0x00000000
-	enemy6Dir: 		.word 0x00000000
-	enemy6State:		.word 0x00fc0303
-
+	enemy6PosX:		.word 8
+	enemy6PosY:		.word 20
+	enemy6Dir: 		.word 0x00000003
+	enemy6State:		.word 0x00ff00dd # Pink
 
 .text
 
@@ -801,21 +800,61 @@ BeginGame:
 	
 	jal ClearBoard
 	
-	# $s0 stores player x position
-	# $s1 stores player y position
-	# $s2 stores player color
-	# $s3 stores player direction
-	li $s0, 8
-	li $s1, 2
-	lw $s2, playerState
-	li $s3, 3
-					
+	# Draw player						
 	lw $a0, playerPosX
 	lw $a1, playerPosY
 	lw $a2, playerState
 	lw $a3, playerDir
 	
-	jal DrawPlayer
+	jal DrawAgent
+	
+	# Draw enemy1			
+	lw $a0, enemy1PosX
+	lw $a1, enemy1PosY
+	lw $a2, enemy1State
+	lw $a3, enemy1Dir
+	
+	jal DrawAgent
+	
+	# Draw enemy2			
+	lw $a0, enemy2PosX
+	lw $a1, enemy2PosY
+	lw $a2, enemy2State
+	lw $a3, enemy2Dir
+	
+	jal DrawAgent
+	
+	# Draw enemy3		
+	lw $a0, enemy3PosX
+	lw $a1, enemy3PosY
+	lw $a2, enemy3State
+	lw $a3, enemy3Dir
+	
+	jal DrawAgent
+	
+	# Draw enemy4			
+	lw $a0, enemy4PosX
+	lw $a1, enemy4PosY
+	lw $a2, enemy4State
+	lw $a3, enemy4Dir
+	
+	jal DrawAgent
+	
+	# Draw enemy5		
+	lw $a0, enemy5PosX
+	lw $a1, enemy5PosY
+	lw $a2, enemy5State
+	lw $a3, enemy5Dir
+	
+	jal DrawAgent
+	
+	# Draw enemy6
+	lw $a0, enemy6PosX
+	lw $a1, enemy6PosY
+	lw $a2, enemy6State
+	lw $a3, enemy6Dir
+	
+	jal DrawAgent
 			
 	
 DrawMap:
@@ -1061,8 +1100,40 @@ DrawRadar:
 	jal DrawVerticalLine
 		
 	
-DrawPlayerPoints:
+DrawAgentPoints:
 
+	# First round
+	li $a0, 14
+	li $a1, 39
+	lw $a2, pointColor
+	jal DrawPoint
+	
+	li $a0, 16
+	li $a1, 39
+	lw $a2, pointColor
+	jal DrawPoint
+	
+	li $a0, 18
+	li $a1, 39
+	lw $a2, pointColor
+	jal DrawPoint
+	
+	li $a0, 20
+	li $a1, 39
+	lw $a2, pointColor
+	jal DrawPoint
+	
+	li $a0, 22
+	li $a1, 39
+	lw $a2, pointColor
+	jal DrawPoint
+	
+	li $a0, 24
+	li $a1, 39
+	lw $a2, pointColor
+	jal DrawPoint
+
+	# Second round
 	li $a0, 26
 	li $a1, 39
 	lw $a2, pointColor
@@ -1092,8 +1163,39 @@ DrawPlayerPoints:
 	li $a1, 39
 	lw $a2, pointColor
 	jal DrawPoint
-		
 	
+	# Third round
+	li $a0, 38
+	li $a1, 39
+	lw $a2, pointColor
+	jal DrawPoint
+	
+	li $a0, 40
+	li $a1, 39
+	lw $a2, pointColor
+	jal DrawPoint
+	
+	li $a0, 42
+	li $a1, 39
+	lw $a2, pointColor
+	jal DrawPoint
+	
+	li $a0, 44
+	li $a1, 39
+	lw $a2, pointColor
+	jal DrawPoint
+	
+	li $a0, 46
+	li $a1, 39
+	lw $a2, pointColor
+	jal DrawPoint
+	
+	li $a0, 48
+	li $a1, 39
+	lw $a2, pointColor
+	jal DrawPoint
+	
+		
 # Wait and read buttons
 Begin_standby:	
 
@@ -1119,12 +1221,12 @@ Standby:
 		
 EndStandby:	
 	
+	# jal MoveAgent con el parametro de cada enemigo
+	
 	j Begin_standby
 	
-	
-	
-				
-# KeyPressed chenges the player direction registers depending on the key pressed
+		
+# KeyPressed changes the player direction registers depending on the key pressed
 KeyPressed:
 
 	addi $sp, $sp, -4
@@ -1138,6 +1240,7 @@ KeyPressed:
 		
 		li $a0, 0
 		li $a1, 0
+		
 		jal MoveAgent
 				
 		j Key_Done
@@ -1148,6 +1251,7 @@ KeyPressed:
 		
 		li $a0, 0
 		li $a1, 1
+		
 		jal MoveAgent
 				
 		j Key_Done
@@ -1158,6 +1262,7 @@ KeyPressed:
 		
 		li $a0, 0
 		li $a1, 2
+		
 		jal MoveAgent
 				
 		j Key_Done
@@ -1168,6 +1273,7 @@ KeyPressed:
 		
 		li $a0, 0
 		li $a1, 3
+		
 		jal MoveAgent
 				
 		j Key_Done	
@@ -1184,7 +1290,7 @@ KeyPressed:
 		jr $ra
 				
 				
-# MovePlayer will chenge the direction of the player an then try to move in the given direction		
+# MoveAgent will change the direction of the player an then try to move in the given direction		
 # $a0 is the agent
 # $a1 is the new direction
 MoveAgent:
@@ -1205,7 +1311,7 @@ MoveAgent:
 		lw $a0, playerPosX
 		lw $a1, playerPosY
 		
-		jal ErasePlayer
+		jal EraseAgent
 		
 		lw $a0, 4($sp)
 		lw $a1, 8($sp)
@@ -1217,9 +1323,9 @@ MoveAgent:
 		lw $a1, playerPosY
 		lw $a2, playerState
 		
-		jal DrawPlayer # draw the player in the new direction
+		jal DrawAgent # draw the player in the new direction
 		
-		AdvanceBlock: # if it is possible, move the player in the direction
+		AdvanceBlock:
 		
 			j MoveAgentDone
 		
@@ -1227,25 +1333,76 @@ MoveAgent:
 	
 		bne $a0, 1, MoveAgentEnemy2
 		
+		# if collision up
+		
+		# if collision down
+		
+		# if collision left
+		
+		# if collision right
+		
+		
+		
+		#AdvanceBlock:
+		
+			#j MoveAgentDone
+				
 	MoveAgentEnemy2:
 	
 		bne $a0, 2, MoveAgentEnemy3
+		
+		
+		
+		
+		
+		
+		#AdvanceBlock:
+		
+			#j MoveAgentDone
 		
 	MoveAgentEnemy3:
 	
 		bne $a0, 3, MoveAgentEnemy4
 		
+		
+		
+		
+		
+		#AdvanceBlock:
+		
+			#j MoveAgentDone
+		
 	MoveAgentEnemy4:
 	
 		bne $a0, 4, MoveAgentEnemy5
+		
+		
+		
+		
+		#AdvanceBlock:
+		
+			#j MoveAgentDone
 		
 	MoveAgentEnemy5:
 	
 		bne $a0, 5, MoveAgentEnemy6
 		
+		
+		
+		
+		
+		#AdvanceBlock:
+		
+			#j MoveAgentDone
+		
 	MoveAgentEnemy6:
 	
 		bne $a0, 6, MoveAgentDone
+		
+		
+		
+		
+		
 		
 	MoveAgentDone:
 	
@@ -1272,25 +1429,28 @@ TryMoveAgent:
 			
 			lw $a0, playerPosX
 			lw $a1, playerPosY
-			jal ErasePlayer
+			
+			jal EraseAgent
 			
 			#Make the test to see if there is collision
-			li $a0, 0 #The olayer
-			li $a1, 0 #Recursion
-			jal CheckCollision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision						
+			#beq $v0, 0, DrawPositionUp			
 			
-			beq $v0, 0, DrawPositionUp
 			lw $t1, playerPosY
 			addi $t1, $t1, -1
 			sw $t1, playerPosY
 			
-			DrawPositionUp:	
-				lw $a0, playerPosX
-				lw $a1, playerPosY
-				lw $a2, playerState
-				lw $a3, playerDir
-				jal DrawPlayer
-				j TryMoveAgentDone
+			
+			lw $a0, playerPosX
+			lw $a1, playerPosY
+			lw $a2, playerState
+			lw $a3, playerDir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
 			
 		PlayerMoveDown:
 		
@@ -1298,25 +1458,27 @@ TryMoveAgent:
 			
 			lw $a0, playerPosX
 			lw $a1, playerPosY
-			jal ErasePlayer
+			
+			jal EraseAgent
 			
 			#Make the test to see if there is collision
-			#li $a0, 0 #The olayer
-			#li $a1, 0 #Recursion
-			#jal CheckCollision
-			
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
 			#beq $v0, 0, DrawPositionDown
+			
 			lw $t1, playerPosY
 			addi $t1, $t1, 1
 			sw $t1, playerPosY
+								
+			lw $a0, playerPosX
+			lw $a1, playerPosY
+			lw $a2, playerState
+			lw $a3, playerDir
 			
-			#DrawPositionDown:			
-				lw $a0, playerPosX
-				lw $a1, playerPosY
-				lw $a2, playerState
-				lw $a3, playerDir
-				jal DrawPlayer
-				j TryMoveAgentDone
+			jal DrawAgent
+			
+			j TryMoveAgentDone
 			
 		PlayerMoveLeft:
 		
@@ -1324,25 +1486,27 @@ TryMoveAgent:
 			
 			lw $a0, playerPosX
 			lw $a1, playerPosY
-			jal ErasePlayer
+			
+			jal EraseAgent
 				
 			#Make the test to see if there is collision
-			#li $a0, 0 #The olayer
-			#li $a1, 0 #Recursion
-			#jal CheckCollision
-			
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
 			#beq $v0, 0, DrawPositionLeft
+			
 			lw $t1, playerPosX
 			addi $t1, $t1, -1
 			sw $t1, playerPosX
-				
-			#DrawPositionLeft:		
-				lw $a0, playerPosX
-				lw $a1, playerPosY
-				lw $a2, playerState
-				lw $a3, playerDir
-				jal DrawPlayer
-				j TryMoveAgentDone
+						
+			lw $a0, playerPosX
+			lw $a1, playerPosY
+			lw $a2, playerState
+			lw $a3, playerDir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
 			
 		PlayerMoveRight:
 		
@@ -1350,25 +1514,27 @@ TryMoveAgent:
 		
 			lw $a0, playerPosX
 			lw $a1, playerPosY
-			jal ErasePlayer
+			
+			jal EraseAgent
 			
 			#Make the test to see if there is collision
-			#li $a0, 0 #The olayer
-			#li $a1, 0 #Recursion
-			#jal CheckCollision
-			
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
 			#beq $v0, 0, DrawPositionRight
+			
 			lw $t1, playerPosX
 			addi $t1, $t1, 1
 			sw $t1, playerPosX
+						
+			lw $a0, playerPosX
+			lw $a1, playerPosY
+			lw $a2, playerState
+			lw $a3, playerDir
 			
-			#DrawPositionRight:			
-				lw $a0, playerPosX
-				lw $a1, playerPosY
-				lw $a2, playerState
-				lw $a3, playerDir
-				jal DrawPlayer
-				j TryMoveAgentDone
+			jal DrawAgent
+			
+			j TryMoveAgentDone
 		
 	TryMoveAgentEnemy1:
 	
@@ -1399,75 +1565,85 @@ TryMoveAgent:
 		lw $ra, 0($sp)
 		addi $sp, $sp, 4
 		
+		jr $ra
+		
 		
 # $a0 x position
 # $a1 y position
 # $a2 contains the color
 # #a3 direction	
-DrawPlayer:
+DrawAgent:
 
 	addi $sp, $sp, -12
 	sw $ra, 0($sp)
 	sw $a0, 4($sp)
 	sw $a1, 8($sp)
 
-	PlayerUp:
+	AgentUp:
 	
-		bne $a3, 0, PlayerDown
+		bne $a3, 0, AgentDown
 		
 		addi $a0, $a0, 1		
 		add $a3, $a0, 0
+		
 		jal DrawHorizontalLine	
 		
 		lw $a0, 4($sp) # Recover x value
 		lw $a1, 8($sp) # Recover y value
 		addi $a1, $a1, 1
 		addi $a3, $a0, 2
+		
 		jal DrawHorizontalLine
 				
 		lw $a0, 4($sp) # Recover x value
 		lw $a1, 8($sp) # Recover y value
 		addi $a1, $a1, 2
 		addi $a3, $a0, 2
+		
 		jal DrawHorizontalLine
 				
-		j EndDrawPlayer
+		j EndDrawAgent
 						
-	PlayerDown:
+	AgentDown:
 	
-		bne $a3, 1, PlayerLeft
+		bne $a3, 1, AgentLeft
 						
 		addi $a0, $a0, 1
 		addi $a1, $a1, 2	
 		add $a3, $a0, 0
+		
 		jal DrawHorizontalLine	
 		
 		lw $a0, 4($sp) # Recover x value
 		lw $a1, 8($sp) # Recover y value
 		addi $a1, $a1, 0
 		addi $a3, $a0, 2
+		
 		jal DrawHorizontalLine
 				
 		lw $a0, 4($sp) # Recover x value
 		lw $a1, 8($sp) # Recover y value
 		addi $a1, $a1, 1
 		addi $a3, $a0, 2
+		
 		jal DrawHorizontalLine
 				
-		j EndDrawPlayer
+		j EndDrawAgent
 		
-	PlayerLeft:
+	AgentLeft:
 	
-		bne $a3, 2, PlayerRight
+		bne $a3, 2, AgentRight
 				
 		addi $a0, $a0, 1		
 		add $a3, $a0, 1
+		
 		jal DrawHorizontalLine	
 		
 		lw $a0, 4($sp) # Recover x value
 		lw $a1, 8($sp) # Recover y value
 		addi $a1, $a1, 1
 		addi $a3, $a0, 2
+		
 		jal DrawHorizontalLine
 				
 		lw $a0, 4($sp) # Recover x value
@@ -1475,30 +1651,34 @@ DrawPlayer:
 		addi $a0, $a0, 1
 		addi $a1, $a1, 2
 		addi $a3, $a0, 1
+		
 		jal DrawHorizontalLine
 				
-		j EndDrawPlayer
+		j EndDrawAgent
 		
-	PlayerRight:
+	AgentRight:
 	
-		bne $a3, 3, EndDrawPlayer
+		bne $a3, 3, EndDrawAgent
 						
 		add $a3, $a0, 1
+		
 		jal DrawHorizontalLine	
 		
 		lw $a0, 4($sp) # Recover x value
 		lw $a1, 8($sp) # Recover y value
 		addi $a1, $a1, 1
 		addi $a3, $a0, 2
+		
 		jal DrawHorizontalLine
 				
 		lw $a0, 4($sp) # Recover x value
 		lw $a1, 8($sp) # Recover y value
 		addi $a1, $a1, 2
 		addi $a3, $a0, 1
+		
 		jal DrawHorizontalLine
 				
-	EndDrawPlayer:
+	EndDrawAgent:
 	
 		lw $ra, 0($sp)	
 		addi $sp, $sp, 12
@@ -1508,7 +1688,7 @@ DrawPlayer:
 																																																		
 # $a0 x position
 # $a1 y position
-ErasePlayer:
+EraseAgent:
 
 	addi $sp, $sp, -12
 	sw $ra, 0($sp)
@@ -1518,21 +1698,24 @@ ErasePlayer:
 	lw $a0, 4($sp)
 	lw $a1, 8($sp)
 	li $a2, 0
-	addi $a3, $a0, 2	
+	addi $a3, $a0, 2
+		
 	jal DrawHorizontalLine	
 	
 	lw $a0, 4($sp)
 	lw $a1, 8($sp)
 	addi $a1, $a1, 1
 	li $a2, 0
-	addi $a3, $a0, 2	
+	addi $a3, $a0, 2
+		
 	jal DrawHorizontalLine	
 	
 	lw $a0, 4($sp)
 	lw $a1, 8($sp)
 	addi $a1, $a1, 2
 	li $a2, 0
-	addi $a3, $a0, 2	
+	addi $a3, $a0, 2
+		
 	jal DrawHorizontalLine	
 		
 	lw $ra, 0($sp)	
@@ -1607,40 +1790,57 @@ DrawPoint:
 	jr $ra
 	
 		
-#Check Collison Function
-#Must be recursive
+# Check Collison Function
+# Must be recursive
+# $a0 agent
 CheckCollision:
+
 	addi $sp, $sp, -12
 	sw $ra, 0($sp)
 	sw $ra, 4($sp)
 	sw $a1, 8($sp)
 	
 	beq $a0, $a1, CheckCol
+	
 	addi $a1, $a1, 1
+	
 	jal CheckCollision
 	
 	CheckCol:
+	
 		PlayerCol:
+		
 			bne $a0, 0, Enemy1Col
 			lw $a0, playerPosX
 			lw $a1, playerPosY
 			li $a2, 4
 			lw $a3, playerDir
+			
 			jal CollisionDirection
+			
 			j CheckCollisionDone
 			
 	Enemy1Col:
-			bne $a0, 0, Enemy2Col
+	
+		bne $a0, 0, Enemy2Col
+			
 	Enemy2Col:	
-			bne $a0, 2, Enemy3Col
+	
+		bne $a0, 2, Enemy3Col
+			
 	Enemy3Col:
-			bne $a0, 3, Enemy4Col
+	
+		bne $a0, 3, Enemy4Col
+			
 	Enemy4Col:
-			bne $a0, 4, CheckCollisionDone
+	
+		bne $a0, 4, CheckCollisionDone
 		
 	CheckCollisionDone:
+	
 		lw $ra, 0($sp)
 		addi $sp, $sp, 12
+		
 		jr $ra
 
 #Auxiliar function to detect if there is a collision
@@ -1655,149 +1855,252 @@ CollisionDirection:
 	li $s0, 0
 	
 	CollUp:
+	
 		bne $a3, 0, CollDown
 		addi $a1, $a1, -2
 		
 		Pixel0UP:
+		
 			jal LoadColor
+			
 			beq $v0, 0, Pixel1UP
+			
 			li $v0, 1
-			j CollDone
-		Pixel1UP:
-			addi $a0, $a0, 1
-			jal LoadColor
-			beq $v0, 0, Pixel2UP
-			li $v0, 1
-			j CollDone
-		Pixel2UP:
-			addi $a0, $a0, 1
-			jal LoadColor
-			beq $v0, 0, Pixel3UP
-			li $v0, 1
-			j CollDone
-		Pixel3UP: 
-			addi $a0, $a0, 1
-			jal LoadColor
-			beq $v0, 0, NoCollUp
-			li $v0, 1
-			j CollDone
-		NoCollUp:
-			li $v0, 0
+			
 			j CollDone
 			
+		Pixel1UP:
 		
+			addi $a0, $a0, 1
+			
+			jal LoadColor
+			
+			beq $v0, 0, Pixel2UP
+			
+			li $v0, 1
+			
+			j CollDone
+			
+		Pixel2UP:
+		
+			addi $a0, $a0, 1
+			
+			jal LoadColor
+			
+			beq $v0, 0, Pixel3UP
+			
+			li $v0, 1
+			
+			j CollDone
+			
+		Pixel3UP: 
+		
+			addi $a0, $a0, 1
+			
+			jal LoadColor
+			
+			beq $v0, 0, NoCollUp
+			
+			li $v0, 1
+			
+			j CollDone
+			
+		NoCollUp:
+		
+			li $v0, 0
+			
+			j CollDone				
 		
 	CollDown:
+	
 		bne $a3, 1, CollLeft
 		addi $a1, $a1, 0
 		
 		Pixel0Down:
+		
 			jal LoadColor
+			
 			beq $v0, 0, Pixel1Down
+			
 			li $v0, 1
+			
 			j CollDone
+			
 		Pixel1Down:
+		
 			addi $a0, $a0, 1
+			
 			jal LoadColor
+			
 			beq $v0, 0, Pixel2Down
+			
 			li $v0, 1
+			
 			j CollDone
+			
 		Pixel2Down:
+		
 			addi $a0, $a0, 1
+			
 			jal LoadColor
+			
 			beq $v0, 0, Pixel3Down
+			
 			li $v0, 1
+			
 			j CollDone
+			
 		Pixel3Down: 
+		
 			addi $a0, $a0, 1
+			
 			jal LoadColor
+			
 			beq $v0, 0, NoCollDown
+			
 			li $v0, 1
+			
 			j CollDone
+			
 		NoCollDown:
+		
 			li $v0, 0
-			j CollDone
-			 
+			
+			j CollDone					 
 		
 	CollLeft:
+	
 		bne $a3, 2, CollRight
 		addi $a0, $a0, -5
 		
 		Pixel0Left:
+		
 			jal LoadColor
+			
 			beq $v0, 0, Pixel1Left
+			
 			li $v0, 1
-			j CollDone
-		Pixel1Left:
-			addi $a1, $a1, 1
-			jal LoadColor
-			beq $v0, 0, Pixel2Left
-			li $v0, 1
-			j CollDone
-		Pixel2Left:
-			addi $a1, $a1, 1
-			jal LoadColor
-			beq $v0, 0, Pixel3Left
-			li $v0, 1
-			j CollDone
-		Pixel3Left: 
-			addi $a1, $a1, 1
-			jal LoadColor
-			beq $v0, 0, NoCollLeft
-			li $v0, 1
-			j CollDone
-		NoCollLeft:
-			li $v0, 0
+			
 			j CollDone
 			
-	CollRight:
-		bne $a3, 3, CollDone
+		Pixel1Left:
 		
-		addi $a0, $a0, -1
-		Pixel0Right:
-			jal LoadColor
-			beq $v0, 0, Pixel1Right
-			li $v0, 1
-			j CollDone
-		Pixel1Right:
 			addi $a1, $a1, 1
+			
 			jal LoadColor
-			beq $v0, 0, Pixel2Right
+			
+			beq $v0, 0, Pixel2Left
+			
 			li $v0, 1
+			
 			j CollDone
-		Pixel2Right:
+			
+		Pixel2Left:
+		
 			addi $a1, $a1, 1
+			
 			jal LoadColor
-			beq $v0, 0, Pixel3Right
+			
+			beq $v0, 0, Pixel3Left
+			
 			li $v0, 1
+			
 			j CollDone
-		Pixel3Right: 
+			
+		Pixel3Left: 
+		
 			addi $a1, $a1, 1
+			
 			jal LoadColor
-			beq $v0, 0, NoCollRight
+			
+			beq $v0, 0, NoCollLeft
+			
 			li $v0, 1
+			
 			j CollDone
-		NoCollRight:
+			
+		NoCollLeft:
+		
 			li $v0, 0
+			
+	CollRight:
+	
+		bne $a3, 3, CollDone
+				
+		addi $a0, $a0, -1
+		
+		Pixel0Right:
+		
+			jal LoadColor
+			
+			beq $v0, 0, Pixel1Right
+			
+			li $v0, 1
+			
+			j CollDone
+			
+		Pixel1Right:
+		
+			addi $a1, $a1, 1
+			
+			jal LoadColor
+			
+			beq $v0, 0, Pixel2Right
+			
+			li $v0, 1
+			
+			j CollDone
+			
+		Pixel2Right:
+		
+			addi $a1, $a1, 1
+			
+			jal LoadColor
+			
+			beq $v0, 0, Pixel3Right
+			
+			li $v0, 1
+			
+			j CollDone
+			
+		Pixel3Right: 
+		
+			addi $a1, $a1, 1
+			
+			jal LoadColor
+			
+			beq $v0, 0, NoCollRight
+			
+			li $v0, 1
+			
+			j CollDone
+			
+		NoCollRight:
+		
+			li $v0, 0
+			
 			j CollDone
 		
 	CollDone:
-	lw $ra, 0($sp)
-	addi $sp, $sp, 4
-	jr $ra
+	
+		lw $ra, 0($sp)
+		addi $sp, $sp, 4
+	
+		jr $ra
 
 
 # $a0 x
 # $a1 y	
 LoadColor:	
+
 	sll $t0, $a1, 6
 	addu $v0, $a0, $t0
 	sll $v0, $v0, 2
 	addu $v0, $v0, $gp
 	lw $v0, 0($v0)
-	jr $ra
 	
-		
+	jr $ra
+			
 		
 # Makes the entire bitmap display the background color (black)
 ClearBoard:
@@ -1811,29 +2114,10 @@ ClearBoard:
 		addu $t2, $t1, $gp
 		sw $t0, ($t2)
 		beqz $t1, EndCLoop
+		
 		j StartCLoop
 		
 	EndCLoop:
 	
 		jr $ra	
-		
-			
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
