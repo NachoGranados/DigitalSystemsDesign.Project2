@@ -1121,7 +1121,9 @@ EndStandby:
 	
 	j Begin_standby
 	
-		
+	
+	
+				
 # KeyPressed chenges the player direction registers depending on the key pressed
 KeyPressed:
 
@@ -1272,18 +1274,28 @@ TryMoveAgent:
 			lw $a1, playerPosY
 			jal ErasePlayer
 			
+			
+			#Make the test to see if there is collision
+			li $a0, 0 #The olayer
+			li $a1, 0 #Recursion
+			jal CheckCollision
+			
+			
+			beq $v0, 0, DrawPositionUp
 			lw $t1, playerPosY
 			addi $t1, $t1, -1
 			sw $t1, playerPosY
-						
-			lw $a0, playerPosX
-			lw $a1, playerPosY
-			lw $a2, playerState
-			lw $a3, playerDir
 			
-			jal DrawPlayer
 			
-			j TryMoveAgentDone
+			DrawPositionUp:	
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				lw $a2, playerState
+				lw $a3, playerDir
+			
+				jal DrawPlayer
+			
+				j TryMoveAgentDone
 			
 		PlayerMoveDown:
 		
@@ -1293,18 +1305,26 @@ TryMoveAgent:
 			lw $a1, playerPosY
 			jal ErasePlayer
 			
+			#Make the test to see if there is collision
+			li $a0, 0 #The olayer
+			li $a1, 0 #Recursion
+			jal CheckCollision
+			beq $v0, 0, DrawPositionDown
+			
 			lw $t1, playerPosY
 			addi $t1, $t1, 1
 			sw $t1, playerPosY
-						
-			lw $a0, playerPosX
-			lw $a1, playerPosY
-			lw $a2, playerState
-			lw $a3, playerDir
 			
-			jal DrawPlayer
 			
-			j TryMoveAgentDone
+			DrawPositionDown:			
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				lw $a2, playerState
+				lw $a3, playerDir
+			
+				jal DrawPlayer
+			
+				j TryMoveAgentDone
 			
 		PlayerMoveLeft:
 		
@@ -1314,39 +1334,55 @@ TryMoveAgent:
 			lw $a1, playerPosY
 			jal ErasePlayer
 			
+						
+			#Make the test to see if there is collision
+			li $a0, 0 #The olayer
+			li $a1, 0 #Recursion
+			jal CheckCollision
+			beq $v0, 0, DrawPositionLeft
+			
 			lw $t1, playerPosX
 			addi $t1, $t1, -1
 			sw $t1, playerPosX
-						
-			lw $a0, playerPosX
-			lw $a1, playerPosY
-			lw $a2, playerState
-			lw $a3, playerDir
+				
+			DrawPositionLeft:		
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				lw $a2, playerState
+				lw $a3, playerDir
 			
-			jal DrawPlayer
+				jal DrawPlayer
 			
-			j TryMoveAgentDone
+				j TryMoveAgentDone
 			
 		PlayerMoveRight:
 		
 			bne $t0, 3, TryMoveAgentDone
 			
+			
 			lw $a0, playerPosX
 			lw $a1, playerPosY
 			jal ErasePlayer
 			
+			#Make the test to see if there is collision
+			li $a0, 0 #The olayer
+			li $a1, 0 #Recursion
+			jal CheckCollision
+			beq $v0, 0, DrawPositionRight
+			
 			lw $t1, playerPosX
 			addi $t1, $t1, 1
 			sw $t1, playerPosX
-						
-			lw $a0, playerPosX
-			lw $a1, playerPosY
-			lw $a2, playerState
-			lw $a3, playerDir
 			
-			jal DrawPlayer
+			DrawPositionRight:			
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				lw $a2, playerState
+				lw $a3, playerDir
 			
-			j TryMoveAgentDone
+				jal DrawPlayer
+			
+				j TryMoveAgentDone
 		
 	TryMoveAgentEnemy1:
 	
@@ -1583,6 +1619,202 @@ DrawPoint:
 	sw $a2, ($v0)		# draw the color to the location
 		
 	jr $ra
+	
+		
+#Check Collison Function
+#Must be recursive
+CheckCollision:
+	addi $sp, $sp, -12
+	sw $ra, 0($sp)
+	sw $ra, 4($sp)
+	sw $a1, 8($sp)
+	
+	beq $a0, $a1, CheckCol
+	addi $a1, $a1, 1
+	jal CheckCollision
+	
+	CheckCol:
+		PlayerCol:
+			bne $a0, 0, Enemy1Col
+			lw $a0, playerPosX
+			lw $a1, playerPosY
+			li $a2, 4
+			lw $a3, playerDir
+			jal CollisionDirection
+			j CheckCollision
+			
+	Enemy1Col:
+			bne $a0, 0, Enemy2Col
+	Enemy2Col:	
+			bne $a0, 2, Enemy3Col
+	Enemy3Col:
+			bne $a0, 3, Enemy4Col
+	Enemy4Col:
+			bne $a0, 4, CheckCollisionDone
+		
+	CheckCollisionDone:
+		lw $ra, 0($sp)
+		addi $sp, $sp, 12
+		jr $ra
+
+#Auxiliar function to detect if there is a collision
+# $a0 agent 
+# $a1 ydir
+# $a2 type
+# $a3 dir
+CollisionDirection:
+
+	addi $sp, $sp, -4
+	sw $ra, 0($sp)
+	CollUp:
+		bne $a3, 0, CollDown
+		addi $a1, $a1, -1
+		Pixel0UP:
+			jal LoadColor
+			beq $v0, 0, Pixel1UP
+			li $v0, 1
+			j CollDone
+		Pixel1UP:
+			addi $a0, $a0, 1
+			jal LoadColor
+			beq $v0, 0, Pixel2UP
+			li $v0, 1
+			j CollDone
+		Pixel2UP:
+			addi $a0, $a0, 1
+			jal LoadColor
+			beq $v0, 0, Pixel3UP
+			li $v0, 1
+			j CollDone
+		Pixel3UP: 
+			addi $a0, $a0, 1
+			jal LoadColor
+			beq $v0, 0, NoCollUp
+			li $v0, 1
+			j CollDone
+		NoCollUp:
+			li $v0, 0
+			j CollDone
+			
+		
+		
+	CollDown:
+		bne $a3, 1, CollLeft
+		
+		addi $a1, $a1, 5
+		Pixel0Down:
+			jal LoadColor
+			beq $v0, 0, Pixel1Down
+			li $v0, 1
+			j CollDone
+		Pixel1Down:
+			addi $a0, $a0, 1
+			jal LoadColor
+			beq $v0, 0, Pixel2Down
+			li $v0, 1
+			j CollDone
+		Pixel2Down:
+			addi $a0, $a0, 1
+			jal LoadColor
+			beq $v0, 0, Pixel3Down
+			li $v0, 1
+			j CollDone
+		Pixel3Down: 
+			addi $a0, $a0, 1
+			jal LoadColor
+			beq $v0, 0, NoCollDown
+			li $v0, 1
+			j CollDone
+		NoCollDown:
+			li $v0, 0
+			j CollDone
+			 
+		
+	CollLeft:
+		bne $a3, 2, CollRight
+		
+		
+		addi $a0, $a0, -1
+		Pixel0Left:
+			jal LoadColor
+			beq $v0, 0, Pixel1Left
+			li $v0, 1
+			j CollDone
+		Pixel1Left:
+			addi $a1, $a1, 1
+			jal LoadColor
+			beq $v0, 0, Pixel2Left
+			li $v0, 1
+			j CollDone
+		Pixel2Left:
+			addi $a1, $a1, 1
+			jal LoadColor
+			beq $v0, 0, Pixel3Left
+			li $v0, 1
+			j CollDone
+		Pixel3Left: 
+			addi $a1, $a1, 1
+			jal LoadColor
+			beq $v0, 0, NoCollLeft
+			li $v0, 1
+			j CollDone
+			
+			
+			
+		NoCollLeft:
+			li $v0, 0
+			j CollDone
+			
+		
+		
+	CollRight:
+		bne $a3, 3, CollDone
+		
+		addi $a0, $a0, -1
+		Pixel0Right:
+			jal LoadColor
+			beq $v0, 0, Pixel1Right
+			li $v0, 1
+			j CollDone
+		Pixel1Right:
+			addi $a1, $a1, 1
+			jal LoadColor
+			beq $v0, 0, Pixel2Right
+			li $v0, 1
+			j CollDone
+		Pixel2Right:
+			addi $a1, $a1, 1
+			jal LoadColor
+			beq $v0, 0, Pixel3Right
+			li $v0, 1
+			j CollDone
+		Pixel3Right: 
+			addi $a1, $a1, 1
+			jal LoadColor
+			beq $v0, 0, NoCollRight
+			li $v0, 1
+			j CollDone
+			
+		NoCollRight:
+			li $v0, 0
+			j CollDone
+		
+	CollDone:
+	lw $ra, 0($sp)
+	addi $sp, $sp, 4
+	jr $ra
+
+
+# $a0 x
+# $a1 y	
+LoadColor:	
+	sll $t0, $a1, 6
+	addu $v0, $a0, $t0
+	sll $v0, $v0, 2
+	addu $v0, $v0, $gp
+	lw $v0, 0($v0)
+	jr $ra
+	
 		
 		
 # Makes the entire bitmap display the background color (black)
