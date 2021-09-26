@@ -30,7 +30,7 @@
 	enemy2PosX:		.word 52
 	enemy2PosY:		.word 20
 	enemy2Dir: 		.word 0x00000002
-	enemy2State:		.word 0x00ff8c00 # Orange
+	enemy2State:		.word 0x00ff6f00 # Orange
 	
 	# Enemy 3
 	enemy3PosX:		.word 18
@@ -48,13 +48,13 @@
 	enemy5PosX:		.word 42
 	enemy5PosY:		.word 32
 	enemy5Dir: 		.word 0x00000000
-	enemy5State:		.word 0x00a600ff # Purple
+	enemy5State:		.word 0x007700ff # Purple
 	
 	# Enemy 6
 	enemy6PosX:		.word 8
 	enemy6PosY:		.word 20
 	enemy6Dir: 		.word 0x00000003
-	enemy6State:		.word 0x00ff00dd # Pink
+	enemy6State:		.word 0x00ff00e6 # Pink
 
 .text
 
@@ -1195,33 +1195,95 @@ DrawAgentPoints:
 	lw $a2, pointColor
 	jal DrawPoint
 	
-		
+	
+# Timers counter for enemies movement
+li $s1, 0
+li $s2, 70
+
+										
 # Wait and read buttons
 Begin_standby:	
 
 	li $t0, 0x00000002 # load 25 into the counter for a ~50 milisec standby
-
-		
+			
 Standby:
 
 	blez $t0, EndStandby
 	li $a0, 1	#
-	li $v0, 32	# pause for 10 milisec
+	li $v0, 32	# pause for 1 milisec
 	syscall		#
 		
 	addi $t0, $t0, -1 		# decrement counter
-		
-	lw $t1, 0xFFFF0000		# check to see if a key has been pressed
-	blez $t1, Standby
-				
-	jal KeyPressed			# see what was pushed
-	sw $zero, 0xFFFF0000		# clear the button pushed bit
-	j Standby
-		
-		
-EndStandby:	
+	addi $s1, $s1, 1                # increment enemies counter
 	
+	bne $s1, $s2, Continue
+	
+	li $s1, 0
+	
+	# Move enemy 1
+	li $a0, 1
+	lw $a1, enemy1Dir
+		
+	jal MoveAgent
+	
+	# Move enemy 2
+	li $a0, 2
+	lw $a1, enemy2Dir
+		
+	jal MoveAgent
+	
+	# Move enemy 3
+	li $a0, 3
+	lw $a1, enemy3Dir
+		
+	jal MoveAgent
+	
+	# Move enemy 4
+	li $a0, 4
+	lw $a1, enemy4Dir
+		
+	jal MoveAgent
+	
+	# Move enemy 5
+	li $a0, 5
+	lw $a1, enemy5Dir
+		
+	jal MoveAgent
+	
+	# Move enemy 6
+	li $a0, 6
+	lw $a1, enemy6Dir
+		
+	jal MoveAgent
+		
+	Continue:
+		
+		lw $t1, 0xFFFF0000		# check to see if a key has been pressed
+		blez $t1, Standby
+				
+		jal KeyPressed			# see what was pushed
+		sw $zero, 0xFFFF0000		# clear the button pushed bit
+		j Standby
+		
+		
+EndStandby:
+
 	# jal MoveAgent con el parametro de cada enemigo
+	#li $a0, 1
+	#lw $a1, enemy1Dir
+	
+	#jal MoveAgent
+	
+	#bne $s1, $s2, RestartStandby
+	
+	#li $s1, 0
+	
+	#li $a0, 1
+	#lw $a1, enemy1Dir
+	
+	#jal MoveAgent	
+	
+	#RestartStandby:
 	
 	j Begin_standby
 	
@@ -1306,7 +1368,7 @@ MoveAgent:
 		
 		lw $t1, playerDir
 		
-		beq $a1, $t1, AdvanceBlock
+		beq $a1, $t1, AdvanceBlockPlayer
 		
 		lw $a0, playerPosX
 		lw $a1, playerPosY
@@ -1325,13 +1387,40 @@ MoveAgent:
 		
 		jal DrawAgent # draw the player in the new direction
 		
-		AdvanceBlock:
+		AdvanceBlockPlayer:
 		
 			j MoveAgentDone
 		
 	MoveAgentEnemy1:
 	
 		bne $a0, 1, MoveAgentEnemy2
+		
+		lw $t1, enemy1Dir
+		
+		beq $a1, $t1, AdvanceBlockEnemy1
+		
+		lw $a0, enemy1PosX
+		lw $a1, enemy1PosY
+		
+		jal EraseAgent
+		
+		lw $a0, 4($sp)
+		lw $a1, 8($sp)
+				
+		move $a3, $a1
+				
+		sw $a3, enemy1Dir # store in memory the new direction						
+		lw $a0, enemy1PosX
+		lw $a1, enemy1PosY
+		lw $a2, enemy1State
+		
+		jal DrawAgent # draw the player in the new direction
+		
+		AdvanceBlockEnemy1:
+		
+			j MoveAgentDone
+		
+		
 		
 		# if collision up
 		
@@ -1343,66 +1432,151 @@ MoveAgent:
 		
 		
 		
-		#AdvanceBlock:
-		
-			#j MoveAgentDone
 				
 	MoveAgentEnemy2:
 	
 		bne $a0, 2, MoveAgentEnemy3
 		
+		lw $t1, enemy2Dir
 		
+		beq $a1, $t1, AdvanceBlockEnemy2
 		
+		lw $a0, enemy2PosX
+		lw $a1, enemy2PosY
 		
+		jal EraseAgent
 		
+		lw $a0, 4($sp)
+		lw $a1, 8($sp)
+				
+		move $a3, $a1
+				
+		sw $a3, enemy2Dir # store in memory the new direction						
+		lw $a0, enemy2PosX
+		lw $a1, enemy2PosY
+		lw $a2, enemy2State
 		
-		#AdvanceBlock:
+		jal DrawAgent # draw the player in the new direction
 		
-			#j MoveAgentDone
+		AdvanceBlockEnemy2:
+		
+			j MoveAgentDone
 		
 	MoveAgentEnemy3:
 	
 		bne $a0, 3, MoveAgentEnemy4
 		
+		lw $t1, enemy3Dir
 		
+		beq $a1, $t1, AdvanceBlockEnemy3
 		
+		lw $a0, enemy3PosX
+		lw $a1, enemy3PosY
 		
+		jal EraseAgent
 		
-		#AdvanceBlock:
+		lw $a0, 4($sp)
+		lw $a1, 8($sp)
+				
+		move $a3, $a1
+				
+		sw $a3, enemy3Dir # store in memory the new direction						
+		lw $a0, enemy3PosX
+		lw $a1, enemy3PosY
+		lw $a2, enemy3State
 		
-			#j MoveAgentDone
+		jal DrawAgent # draw the player in the new direction
+		
+		AdvanceBlockEnemy3:
+		
+			j MoveAgentDone
 		
 	MoveAgentEnemy4:
 	
 		bne $a0, 4, MoveAgentEnemy5
 		
+		lw $t1, enemy4Dir
 		
+		beq $a1, $t1, AdvanceBlockEnemy4
 		
+		lw $a0, enemy4PosX
+		lw $a1, enemy4PosY
 		
-		#AdvanceBlock:
+		jal EraseAgent
 		
-			#j MoveAgentDone
+		lw $a0, 4($sp)
+		lw $a1, 8($sp)
+				
+		move $a3, $a1
+				
+		sw $a3, enemy4Dir # store in memory the new direction						
+		lw $a0, enemy4PosX
+		lw $a1, enemy4PosY
+		lw $a2, enemy4State
+		
+		jal DrawAgent # draw the player in the new direction
+		
+		AdvanceBlockEnemy4:
+		
+			j MoveAgentDone
 		
 	MoveAgentEnemy5:
 	
 		bne $a0, 5, MoveAgentEnemy6
 		
+		lw $t1, enemy5Dir
 		
+		beq $a1, $t1, AdvanceBlockEnemy5
 		
+		lw $a0, enemy5PosX
+		lw $a1, enemy5PosY
 		
+		jal EraseAgent
 		
-		#AdvanceBlock:
+		lw $a0, 4($sp)
+		lw $a1, 8($sp)
+				
+		move $a3, $a1
+				
+		sw $a3, enemy5Dir # store in memory the new direction						
+		lw $a0, enemy5PosX
+		lw $a1, enemy5PosY
+		lw $a2, enemy5State
 		
-			#j MoveAgentDone
+		jal DrawAgent # draw the player in the new direction
+		
+		AdvanceBlockEnemy5:
+		
+			j MoveAgentDone
 		
 	MoveAgentEnemy6:
 	
 		bne $a0, 6, MoveAgentDone
 		
+		lw $t1, enemy6Dir
 		
+		beq $a1, $t1, AdvanceBlockEnemy6
 		
+		lw $a0, enemy6PosX
+		lw $a1, enemy6PosY
 		
+		jal EraseAgent
 		
+		lw $a0, 4($sp)
+		lw $a1, 8($sp)
+				
+		move $a3, $a1
+				
+		sw $a3, enemy6Dir # store in memory the new direction						
+		lw $a0, enemy6PosX
+		lw $a1, enemy6PosY
+		lw $a2, enemy6State
+		
+		jal DrawAgent # draw the player in the new direction
+		
+		AdvanceBlockEnemy6:
+		
+			# Do nothing
 		
 	MoveAgentDone:
 	
@@ -1540,26 +1714,710 @@ TryMoveAgent:
 	
 		bne $a0, 1, TryMoveAgentEnemy2
 		
+		lw $t0, enemy1Dir
+		
+		Enemy1MoveUp:
+		
+			bne $t0, 0, Enemy1MoveDown
+			
+			lw $a0, enemy1PosX
+			lw $a1, enemy1PosY
+			
+			jal EraseAgent
+			
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision						
+			#beq $v0, 0, DrawPositionUp			
+			
+			lw $t1, enemy1PosY
+			addi $t1, $t1, -1
+			sw $t1, enemy1PosY
+			
+			
+			lw $a0, enemy1PosX
+			lw $a1, enemy1PosY
+			lw $a2, enemy1State
+			lw $a3, enemy1Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+			
+		Enemy1MoveDown:
+		
+			bne $t0, 1, Enemy1MoveLeft
+			
+			lw $a0, enemy1PosX
+			lw $a1, enemy1PosY
+			
+			jal EraseAgent
+			
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
+			#beq $v0, 0, DrawPositionDown
+			
+			lw $t1, enemy1PosY
+			addi $t1, $t1, 1
+			sw $t1, enemy1PosY
+								
+			lw $a0, enemy1PosX
+			lw $a1, enemy1PosY
+			lw $a2, enemy1State
+			lw $a3, enemy1Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+			
+		Enemy1MoveLeft:
+		
+			bne $t0, 2, Enemy1MoveRight
+			
+			lw $a0, enemy1PosX
+			lw $a1, enemy1PosY
+			
+			jal EraseAgent
+				
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
+			#beq $v0, 0, DrawPositionLeft
+			
+			lw $t1, enemy1PosX
+			addi $t1, $t1, -1
+			sw $t1, enemy1PosX
+						
+			lw $a0, enemy1PosX
+			lw $a1, enemy1PosY
+			lw $a2, enemy1State
+			lw $a3, enemy1Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+			
+		Enemy1MoveRight:
+		
+			bne $t0, 3, TryMoveAgentDone
+		
+			lw $a0, enemy1PosX
+			lw $a1, enemy1PosY
+			
+			jal EraseAgent
+			
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
+			#beq $v0, 0, DrawPositionRight
+			
+			lw $t1, enemy1PosX
+			addi $t1, $t1, 1
+			sw $t1, enemy1PosX
+						
+			lw $a0, enemy1PosX
+			lw $a1, enemy1PosY
+			lw $a2, enemy1State
+			lw $a3, enemy1Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+				
 	TryMoveAgentEnemy2:
 	
 		bne $a0, 2, TryMoveAgentEnemy3
+		
+		lw $t0, enemy2Dir
+		
+		Enemy2MoveUp:
+		
+			bne $t0, 0, Enemy2MoveDown
+			
+			lw $a0, enemy2PosX
+			lw $a1, enemy2PosY
+			
+			jal EraseAgent
+			
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision						
+			#beq $v0, 0, DrawPositionUp			
+			
+			lw $t1, enemy2PosY
+			addi $t1, $t1, -1
+			sw $t1, enemy2PosY
+			
+			
+			lw $a0, enemy2PosX
+			lw $a1, enemy2PosY
+			lw $a2, enemy2State
+			lw $a3, enemy2Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+			
+		Enemy2MoveDown:
+		
+			bne $t0, 1, Enemy2MoveLeft
+			
+			lw $a0, enemy2PosX
+			lw $a1, enemy2PosY
+			
+			jal EraseAgent
+			
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
+			#beq $v0, 0, DrawPositionDown
+			
+			lw $t1, enemy2PosY
+			addi $t1, $t1, 1
+			sw $t1, enemy2PosY
+								
+			lw $a0, enemy2PosX
+			lw $a1, enemy2PosY
+			lw $a2, enemy2State
+			lw $a3, enemy2Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+			
+		Enemy2MoveLeft:
+		
+			bne $t0, 2, Enemy2MoveRight
+			
+			lw $a0, enemy2PosX
+			lw $a1, enemy2PosY
+			
+			jal EraseAgent
+				
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
+			#beq $v0, 0, DrawPositionLeft
+			
+			lw $t1, enemy2PosX
+			addi $t1, $t1, -1
+			sw $t1, enemy2PosX
+						
+			lw $a0, enemy2PosX
+			lw $a1, enemy2PosY
+			lw $a2, enemy2State
+			lw $a3, enemy2Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+			
+		Enemy2MoveRight:
+		
+			bne $t0, 3, TryMoveAgentDone
+		
+			lw $a0, enemy2PosX
+			lw $a1, enemy2PosY
+			
+			jal EraseAgent
+			
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
+			#beq $v0, 0, DrawPositionRight
+			
+			lw $t1, enemy2PosX
+			addi $t1, $t1, 1
+			sw $t1, enemy2PosX
+						
+			lw $a0, enemy2PosX
+			lw $a1, enemy2PosY
+			lw $a2, enemy2State
+			lw $a3, enemy2Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
 		
 	TryMoveAgentEnemy3:
 	
 		bne $a0, 3, TryMoveAgentEnemy4
 		
+		lw $t0, enemy3Dir
+		
+		Enemy3MoveUp:
+		
+			bne $t0, 0, Enemy1MoveDown
+			
+			lw $a0, enemy3PosX
+			lw $a1, enemy3PosY
+			
+			jal EraseAgent
+			
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision						
+			#beq $v0, 0, DrawPositionUp			
+			
+			lw $t1, enemy3PosY
+			addi $t1, $t1, -1
+			sw $t1, enemy3PosY			
+			
+			lw $a0, enemy3PosX
+			lw $a1, enemy3PosY
+			lw $a2, enemy3State
+			lw $a3, enemy3Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+			
+		Enemy3MoveDown:
+		
+			bne $t0, 1, Enemy3MoveLeft
+			
+			lw $a0, enemy3PosX
+			lw $a1, enemy3PosY
+			
+			jal EraseAgent
+			
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
+			#beq $v0, 0, DrawPositionDown
+			
+			lw $t1, enemy3PosY
+			addi $t1, $t1, 1
+			sw $t1, enemy3PosY
+								
+			lw $a0, enemy3PosX
+			lw $a1, enemy3PosY
+			lw $a2, enemy3State
+			lw $a3, enemy3Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+			
+		Enemy3MoveLeft:
+		
+			bne $t0, 2, Enemy3MoveRight
+			
+			lw $a0, enemy3PosX
+			lw $a1, enemy3PosY
+			
+			jal EraseAgent
+				
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
+			#beq $v0, 0, DrawPositionLeft
+			
+			lw $t1, enemy3PosX
+			addi $t1, $t1, -1
+			sw $t1, enemy3PosX
+						
+			lw $a0, enemy3PosX
+			lw $a1, enemy3PosY
+			lw $a2, enemy3State
+			lw $a3, enemy3Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+			
+		Enemy3MoveRight:
+		
+			bne $t0, 3, TryMoveAgentDone
+		
+			lw $a0, enemy3PosX
+			lw $a1, enemy3PosY
+			
+			jal EraseAgent
+			
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
+			#beq $v0, 0, DrawPositionRight
+			
+			lw $t1, enemy3PosX
+			addi $t1, $t1, 1
+			sw $t1, enemy3PosX
+						
+			lw $a0, enemy3PosX
+			lw $a1, enemy3PosY
+			lw $a2, enemy3State
+			lw $a3, enemy3Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+		
 	TryMoveAgentEnemy4:
 	
 		bne $a0, 4, TryMoveAgentEnemy5
+		
+		lw $t0, enemy4Dir
+		
+		Enemy4MoveUp:
+		
+			bne $t0, 0, Enemy4MoveDown
+			
+			lw $a0, enemy4PosX
+			lw $a1, enemy4PosY
+			
+			jal EraseAgent
+			
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision						
+			#beq $v0, 0, DrawPositionUp			
+			
+			lw $t1, enemy4PosY
+			addi $t1, $t1, -1
+			sw $t1, enemy4PosY			
+			
+			lw $a0, enemy4PosX
+			lw $a1, enemy4PosY
+			lw $a2, enemy4State
+			lw $a3, enemy4Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+			
+		Enemy4MoveDown:
+		
+			bne $t0, 1, Enemy4MoveLeft
+			
+			lw $a0, enemy4PosX
+			lw $a1, enemy4PosY
+			
+			jal EraseAgent
+			
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
+			#beq $v0, 0, DrawPositionDown
+			
+			lw $t1, enemy4PosY
+			addi $t1, $t1, 1
+			sw $t1, enemy4PosY
+								
+			lw $a0, enemy4PosX
+			lw $a1, enemy4PosY
+			lw $a2, enemy4State
+			lw $a3, enemy4Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+			
+		Enemy4MoveLeft:
+		
+			bne $t0, 2, Enemy4MoveRight
+			
+			lw $a0, enemy4PosX
+			lw $a1, enemy4PosY
+			
+			jal EraseAgent
+				
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
+			#beq $v0, 0, DrawPositionLeft
+			
+			lw $t1, enemy4PosX
+			addi $t1, $t1, -1
+			sw $t1, enemy4PosX
+						
+			lw $a0, enemy4PosX
+			lw $a1, enemy4PosY
+			lw $a2, enemy4State
+			lw $a3, enemy4Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+			
+		Enemy4MoveRight:
+		
+			bne $t0, 3, TryMoveAgentDone
+		
+			lw $a0, enemy4PosX
+			lw $a1, enemy4PosY
+			
+			jal EraseAgent
+			
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
+			#beq $v0, 0, DrawPositionRight
+			
+			lw $t1, enemy4PosX
+			addi $t1, $t1, 1
+			sw $t1, enemy4PosX
+						
+			lw $a0, enemy4PosX
+			lw $a1, enemy4PosY
+			lw $a2, enemy4State
+			lw $a3, enemy4Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
 		
 	TryMoveAgentEnemy5:
 	
 		bne $a0, 5, TryMoveAgentEnemy6
 		
+		lw $t0, enemy5Dir
+		
+		Enemy5MoveUp:
+		
+			bne $t0, 0, Enemy5MoveDown
+			
+			lw $a0, enemy5PosX
+			lw $a1, enemy5PosY
+			
+			jal EraseAgent
+			
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision						
+			#beq $v0, 0, DrawPositionUp			
+			
+			lw $t1, enemy5PosY
+			addi $t1, $t1, -1
+			sw $t1, enemy5PosY
+						
+			lw $a0, enemy5PosX
+			lw $a1, enemy5PosY
+			lw $a2, enemy5State
+			lw $a3, enemy5Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+			
+		Enemy5MoveDown:
+		
+			bne $t0, 1, Enemy5MoveLeft
+			
+			lw $a0, enemy5PosX
+			lw $a1, enemy5PosY
+			
+			jal EraseAgent
+			
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
+			#beq $v0, 0, DrawPositionDown
+			
+			lw $t1, enemy5PosY
+			addi $t1, $t1, 1
+			sw $t1, enemy5PosY
+								
+			lw $a0, enemy5PosX
+			lw $a1, enemy5PosY
+			lw $a2, enemy5State
+			lw $a3, enemy5Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+			
+		Enemy5MoveLeft:
+		
+			bne $t0, 2, Enemy5MoveRight
+			
+			lw $a0, enemy5PosX
+			lw $a1, enemy5PosY
+			
+			jal EraseAgent
+				
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
+			#beq $v0, 0, DrawPositionLeft
+			
+			lw $t1, enemy5PosX
+			addi $t1, $t1, -1
+			sw $t1, enemy5PosX
+						
+			lw $a0, enemy5PosX
+			lw $a1, enemy5PosY
+			lw $a2, enemy5State
+			lw $a3, enemy5Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+			
+		Enemy5MoveRight:
+		
+			bne $t0, 3, TryMoveAgentDone
+		
+			lw $a0, enemy5PosX
+			lw $a1, enemy5PosY
+			
+			jal EraseAgent
+			
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
+			#beq $v0, 0, DrawPositionRight
+			
+			lw $t1, enemy5PosX
+			addi $t1, $t1, 1
+			sw $t1, enemy5PosX
+						
+			lw $a0, enemy5PosX
+			lw $a1, enemy5PosY
+			lw $a2, enemy5State
+			lw $a3, enemy5Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+		
 	TryMoveAgentEnemy6:
 	
 		bne $a0, 6, TryMoveAgentDone
-	
+		
+		lw $t0, enemy6Dir
+		
+		Enemy6MoveUp:
+		
+			bne $t0, 0, Enemy6MoveDown
+			
+			lw $a0, enemy6PosX
+			lw $a1, enemy6PosY
+			
+			jal EraseAgent
+			
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision						
+			#beq $v0, 0, DrawPositionUp			
+			
+			lw $t1, enemy6PosY
+			addi $t1, $t1, -1
+			sw $t1, enemy6PosY			
+			
+			lw $a0, enemy6PosX
+			lw $a1, enemy6PosY
+			lw $a2, enemy6State
+			lw $a3, enemy6Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+			
+		Enemy6MoveDown:
+		
+			bne $t0, 1, Enemy6MoveLeft
+			
+			lw $a0, enemy6PosX
+			lw $a1, enemy6PosY
+			
+			jal EraseAgent
+			
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
+			#beq $v0, 0, DrawPositionDown
+			
+			lw $t1, enemy6PosY
+			addi $t1, $t1, 1
+			sw $t1, enemy6PosY
+								
+			lw $a0, enemy6PosX
+			lw $a1, enemy6PosY
+			lw $a2, enemy6State
+			lw $a3, enemy6Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+			
+		Enemy6MoveLeft:
+		
+			bne $t0, 2, Enemy6MoveRight
+			
+			lw $a0, enemy6PosX
+			lw $a1, enemy6PosY
+			
+			jal EraseAgent
+				
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
+			#beq $v0, 0, DrawPositionLeft
+			
+			lw $t1, enemy6PosX
+			addi $t1, $t1, -1
+			sw $t1, enemy6PosX
+						
+			lw $a0, enemy6PosX
+			lw $a1, enemy6PosY
+			lw $a2, enemy6State
+			lw $a3, enemy6Dir
+			
+			jal DrawAgent
+			
+			j TryMoveAgentDone
+			
+		Enemy6MoveRight:
+		
+			bne $t0, 3, TryMoveAgentDone
+		
+			lw $a0, enemy6PosX
+			lw $a1, enemy6PosY
+			
+			jal EraseAgent
+			
+			#Make the test to see if there is collision
+			#li $a0, 0 # The player
+			#li $a1, 0 # Recursion
+			#jal CheckCollision			
+			#beq $v0, 0, DrawPositionRight
+			
+			lw $t1, enemy6PosX
+			addi $t1, $t1, 1
+			sw $t1, enemy6PosX
+						
+			lw $a0, enemy6PosX
+			lw $a1, enemy6PosY
+			lw $a2, enemy6State
+			lw $a3, enemy6Dir
+			
+			jal DrawAgent
+				
 	TryMoveAgentDone:
 	
 		lw $ra, 0($sp)
