@@ -1224,37 +1224,37 @@ Standby:
 	li $a0, 1
 	lw $a1, enemy1Dir
 		
-	jal MoveAgent
+	#jal MoveAgent
 	
 	# Move enemy 2
 	li $a0, 2
 	lw $a1, enemy2Dir
 		
-	jal MoveAgent
+	#jal MoveAgent
 	
 	# Move enemy 3
 	li $a0, 3
 	lw $a1, enemy3Dir
 		
-	jal MoveAgent
+	#jal MoveAgent
 	
 	# Move enemy 4
 	li $a0, 4
 	lw $a1, enemy4Dir
 		
-	jal MoveAgent
+	#jal MoveAgent
 	
 	# Move enemy 5
 	li $a0, 5
 	lw $a1, enemy5Dir
 		
-	jal MoveAgent
+	#jal MoveAgent
 	
 	# Move enemy 6
 	li $a0, 6
 	lw $a1, enemy6Dir
 		
-	jal MoveAgent
+	#jal MoveAgent
 		
 	Continue:
 		
@@ -1267,23 +1267,6 @@ Standby:
 		
 		
 EndStandby:
-
-	# jal MoveAgent con el parametro de cada enemigo
-	#li $a0, 1
-	#lw $a1, enemy1Dir
-	
-	#jal MoveAgent
-	
-	#bne $s1, $s2, RestartStandby
-	
-	#li $s1, 0
-	
-	#li $a0, 1
-	#lw $a1, enemy1Dir
-	
-	#jal MoveAgent	
-	
-	#RestartStandby:
 	
 	j Begin_standby
 	
@@ -1606,23 +1589,26 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
-			#Make the test to see if there is collision
-			#li $a0, 0 # The player
-			#li $a1, 0 # Recursion
-			#jal CheckCollision						
-			#beq $v0, 0, DrawPositionUp			
+			# Make the test to see if there is collision
+			li $a0, 0 # the player
+			li $a1, 0 # requiered for recursion
+			
+			jal CheckCollision						
+			
+			bne $v0, 0, DrawPositionUp			
 			
 			lw $t1, playerPosY
 			addi $t1, $t1, -1
 			sw $t1, playerPosY
 			
+			DrawPositionUp:
 			
-			lw $a0, playerPosX
-			lw $a1, playerPosY
-			lw $a2, playerState
-			lw $a3, playerDir
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				lw $a2, playerState
+				lw $a3, playerDir
 			
-			jal DrawAgent
+				jal DrawAgent
 			
 			j TryMoveAgentDone
 			
@@ -1635,22 +1621,26 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
-			#Make the test to see if there is collision
-			#li $a0, 0 # The player
-			#li $a1, 0 # Recursion
-			#jal CheckCollision			
-			#beq $v0, 0, DrawPositionDown
+			# Make the test to see if there is collision
+			li $a0, 0 # the player
+			li $a1, 0 # requiered for recursion
+			
+			jal CheckCollision			
+			
+			bne $v0, 0, DrawPositionDown
 			
 			lw $t1, playerPosY
 			addi $t1, $t1, 1
 			sw $t1, playerPosY
 								
-			lw $a0, playerPosX
-			lw $a1, playerPosY
-			lw $a2, playerState
-			lw $a3, playerDir
+			DrawPositionDown:
 			
-			jal DrawAgent
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				lw $a2, playerState
+				lw $a3, playerDir
+			
+				jal DrawAgent
 			
 			j TryMoveAgentDone
 			
@@ -1663,22 +1653,26 @@ TryMoveAgent:
 			
 			jal EraseAgent
 				
-			#Make the test to see if there is collision
-			#li $a0, 0 # The player
-			#li $a1, 0 # Recursion
-			#jal CheckCollision			
-			#beq $v0, 0, DrawPositionLeft
+			# Make the test to see if there is collision
+			li $a0, 0 # the player
+			li $a1, 0 # requiered for recursion
+			
+			jal CheckCollision			
+			
+			bne $v0, 0, DrawPositionLeft
 			
 			lw $t1, playerPosX
 			addi $t1, $t1, -1
 			sw $t1, playerPosX
-						
-			lw $a0, playerPosX
-			lw $a1, playerPosY
-			lw $a2, playerState
-			lw $a3, playerDir
 			
-			jal DrawAgent
+			DrawPositionLeft:
+			
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				lw $a2, playerState
+				lw $a3, playerDir
+			
+				jal DrawAgent
 			
 			j TryMoveAgentDone
 			
@@ -1691,22 +1685,26 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
-			#Make the test to see if there is collision
-			#li $a0, 0 # The player
-			#li $a1, 0 # Recursion
-			#jal CheckCollision			
-			#beq $v0, 0, DrawPositionRight
+			# Make the test to see if there is collision
+			li $a0, 0 # the player
+			li $a1, 0 # requiered for recursion
+			
+			jal CheckCollision			
+			
+			bne $v0, 0, DrawPositionRight
 			
 			lw $t1, playerPosX
 			addi $t1, $t1, 1
 			sw $t1, playerPosX
 						
-			lw $a0, playerPosX
-			lw $a1, playerPosY
-			lw $a2, playerState
-			lw $a3, playerDir
+			DrawPositionRight:
 			
-			jal DrawAgent
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				lw $a2, playerState
+				lw $a3, playerDir
+			
+				jal DrawAgent
 			
 			j TryMoveAgentDone
 		
@@ -2649,8 +2647,8 @@ DrawPoint:
 	
 		
 # Check Collison Function
-# Must be recursive
 # $a0 agent
+# $a1 must be zero
 CheckCollision:
 
 	addi $sp, $sp, -12
@@ -2669,6 +2667,7 @@ CheckCollision:
 		PlayerCol:
 		
 			bne $a0, 0, Enemy1Col
+			
 			lw $a0, playerPosX
 			lw $a1, playerPosY
 			li $a2, 4
@@ -2678,21 +2677,30 @@ CheckCollision:
 			
 			j CheckCollisionDone
 			
-	Enemy1Col:
+		Enemy1Col:
 	
-		bne $a0, 0, Enemy2Col
+			bne $a0, 1, Enemy2Col
 			
-	Enemy2Col:	
+		Enemy2Col:	
 	
-		bne $a0, 2, Enemy3Col
+			bne $a0, 2, Enemy3Col
 			
-	Enemy3Col:
+		Enemy3Col:
 	
-		bne $a0, 3, Enemy4Col
+			bne $a0, 3, Enemy4Col
 			
-	Enemy4Col:
+		Enemy4Col:
 	
-		bne $a0, 4, CheckCollisionDone
+			bne $a0, 4, Enemy5Col
+		
+		Enemy5Col:
+	
+			bne $a0, 5, Enemy6Col
+		
+		Enemy6Col:
+	
+			bne $a0, 6, CheckCollisionDone
+		
 		
 	CheckCollisionDone:
 	
@@ -2710,55 +2718,55 @@ CollisionDirection:
 
 	addi $sp, $sp, -4
 	sw $ra, 0($sp)
-	li $s0, 0
 	
 	CollUp:
 	
 		bne $a3, 0, CollDown
-		addi $a1, $a1, -2
 		
-		Pixel0UP:
+		addi $a1, $a1, -2 # ajust the coordinate for up
+		
+		Pixel0Up:
 		
 			jal LoadColor
 			
-			beq $v0, 0, Pixel1UP
-			
+			beq $v0, 0, Pixel1Up
+						
 			li $v0, 1
 			
 			j CollDone
 			
-		Pixel1UP:
+		Pixel1Up:
 		
 			addi $a0, $a0, 1
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel2UP
-			
+			beq $v0, 0, Pixel2Up
+						
 			li $v0, 1
 			
 			j CollDone
 			
-		Pixel2UP:
+		Pixel2Up:
 		
 			addi $a0, $a0, 1
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel3UP
-			
+			beq $v0, 0, Pixel3Up
+					
 			li $v0, 1
 			
 			j CollDone
 			
-		Pixel3UP: 
+		Pixel3Up: 
 		
 			addi $a0, $a0, 1
 			
 			jal LoadColor
 			
-			beq $v0, 0, NoCollUp
-			
+			beq $v0, 0, NoCollUp	
+					
 			li $v0, 1
 			
 			j CollDone
@@ -2772,14 +2780,15 @@ CollisionDirection:
 	CollDown:
 	
 		bne $a3, 1, CollLeft
-		addi $a1, $a1, 0
+		
+		addi $a1, $a1, 4 # ajust the coordinate for down
 		
 		Pixel0Down:
 		
 			jal LoadColor
 			
-			beq $v0, 0, Pixel1Down
-			
+			beq $v0, 0, Pixel1Down	
+					
 			li $v0, 1
 			
 			j CollDone
@@ -2790,8 +2799,8 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel2Down
-			
+			beq $v0, 0, Pixel2Down	
+					
 			li $v0, 1
 			
 			j CollDone
@@ -2802,8 +2811,8 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel3Down
-			
+			beq $v0, 0, Pixel3Down	
+					
 			li $v0, 1
 			
 			j CollDone
@@ -2814,8 +2823,8 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, NoCollDown
-			
+			beq $v0, 0, NoCollDown	
+					
 			li $v0, 1
 			
 			j CollDone
@@ -2829,14 +2838,15 @@ CollisionDirection:
 	CollLeft:
 	
 		bne $a3, 2, CollRight
-		addi $a0, $a0, -5
+		
+		addi $a0, $a0, -2 # ajust the coordinate for left
 		
 		Pixel0Left:
 		
 			jal LoadColor
 			
-			beq $v0, 0, Pixel1Left
-			
+			beq $v0, 0, Pixel1Left	
+					
 			li $v0, 1
 			
 			j CollDone
@@ -2847,8 +2857,8 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel2Left
-			
+			beq $v0, 0, Pixel2Left	
+					
 			li $v0, 1
 			
 			j CollDone
@@ -2859,8 +2869,8 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel3Left
-			
+			beq $v0, 0, Pixel3Left	
+					
 			li $v0, 1
 			
 			j CollDone
@@ -2871,8 +2881,8 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, NoCollLeft
-			
+			beq $v0, 0, NoCollLeft	
+					
 			li $v0, 1
 			
 			j CollDone
@@ -2885,14 +2895,14 @@ CollisionDirection:
 	
 		bne $a3, 3, CollDone
 				
-		addi $a0, $a0, -1
+		addi $a0, $a0, 4 # ajust the coordinate for right
 		
 		Pixel0Right:
 		
 			jal LoadColor
 			
-			beq $v0, 0, Pixel1Right
-			
+			beq $v0, 0, Pixel1Right		
+				
 			li $v0, 1
 			
 			j CollDone
@@ -2903,8 +2913,8 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel2Right
-			
+			beq $v0, 0, Pixel2Right		
+				
 			li $v0, 1
 			
 			j CollDone
@@ -2915,8 +2925,8 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel3Right
-			
+			beq $v0, 0, Pixel3Right	
+					
 			li $v0, 1
 			
 			j CollDone
@@ -2927,8 +2937,8 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, NoCollRight
-			
+			beq $v0, 0, NoCollRight	
+					
 			li $v0, 1
 			
 			j CollDone
