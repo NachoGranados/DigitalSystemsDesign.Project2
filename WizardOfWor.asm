@@ -2,7 +2,6 @@
 
 	backgroundColor:	.word 0x00000000		
 	wallColor:		.word 0x00007bff
-	pointColor:		.word 0x00ffffff
 	
 	# agent identifies which element (player or enemy) the function is handing
 	# 0 is the player
@@ -12,6 +11,7 @@
 	# 4 is the enemy 4
 	# 5 is the enemy 5
 	# 6 is the enemy 6
+	# 7 is the player bullet
 	agent:			.word 0x00000000
 	
 	# Player
@@ -19,6 +19,19 @@
 	playerPosY:		.word 2
 	playerDir: 		.word 0x00000003
 	playerState:		.word 0x00ffc800
+	
+	# PlayerBullet
+	playerBulletActive: 	.word 0
+	playerBulletPosX:	.word 0
+	playerBulletPosY:	.word 0
+	playerBulletDir:	.word 0
+	playerBulletState:	.word 0x00ffffff
+	
+	# PlayerScore
+	playerScoreNumber:	.word 0
+	playerScorePosX:	.word 14
+	playerScorePosY:	.word 39
+	playerScoreState:	.word 0x00ffffff
 	
 	# Enemy 1
 	enemy1PosX:		.word 53
@@ -1103,102 +1116,106 @@ DrawRadar:
 DrawAgentPoints:
 
 	# First round
-	li $a0, 14
-	li $a1, 39
-	lw $a2, pointColor
-	jal DrawPoint
+	#li $a0, 14
+	#li $a1, 39
+	#lw $a2, playerBulletState
+	#jal DrawPoint
 	
-	li $a0, 16
-	li $a1, 39
-	lw $a2, pointColor
-	jal DrawPoint
+	#li $a0, 16
+	#li $a1, 39
+	#lw $a2, playerBulletState
+	#jal DrawPoint
 	
-	li $a0, 18
-	li $a1, 39
-	lw $a2, pointColor
-	jal DrawPoint
+	#li $a0, 18
+	#li $a1, 39
+	#lw $a2, playerBulletState
+	#jal DrawPoint
 	
-	li $a0, 20
-	li $a1, 39
-	lw $a2, pointColor
-	jal DrawPoint
+	#li $a0, 20
+	#li $a1, 39
+	#lw $a2, playerBulletState
+	#jal DrawPoint
 	
-	li $a0, 22
-	li $a1, 39
-	lw $a2, pointColor
-	jal DrawPoint
+	#li $a0, 22
+	#li $a1, 39
+	#lw $a2, playerBulletState
+	#jal DrawPoint
 	
-	li $a0, 24
-	li $a1, 39
-	lw $a2, pointColor
-	jal DrawPoint
+	#li $a0, 24
+	#li $a1, 39
+	#lw $a2, playerBulletState
+	#jal DrawPoint
 
 	# Second round
 	li $a0, 26
 	li $a1, 39
-	lw $a2, pointColor
+	lw $a2, playerBulletState
 	jal DrawPoint
 	
 	li $a0, 28
 	li $a1, 39
-	lw $a2, pointColor
+	lw $a2, playerBulletState
 	jal DrawPoint
 	
 	li $a0, 30
 	li $a1, 39
-	lw $a2, pointColor
+	lw $a2, playerBulletState
 	jal DrawPoint
 	
 	li $a0, 32
 	li $a1, 39
-	lw $a2, pointColor
+	lw $a2, playerBulletState
 	jal DrawPoint
 	
 	li $a0, 34
 	li $a1, 39
-	lw $a2, pointColor
+	lw $a2, playerBulletState
 	jal DrawPoint
 	
 	li $a0, 36
 	li $a1, 39
-	lw $a2, pointColor
+	lw $a2, playerBulletState
 	jal DrawPoint
 	
 	# Third round
 	li $a0, 38
 	li $a1, 39
-	lw $a2, pointColor
+	lw $a2, playerBulletState
 	jal DrawPoint
 	
 	li $a0, 40
 	li $a1, 39
-	lw $a2, pointColor
+	lw $a2, playerBulletState
 	jal DrawPoint
 	
 	li $a0, 42
 	li $a1, 39
-	lw $a2, pointColor
+	lw $a2, playerBulletState
 	jal DrawPoint
 	
 	li $a0, 44
 	li $a1, 39
-	lw $a2, pointColor
+	lw $a2, playerBulletState
 	jal DrawPoint
 	
 	li $a0, 46
 	li $a1, 39
-	lw $a2, pointColor
+	lw $a2, playerBulletState
 	jal DrawPoint
 	
 	li $a0, 48
 	li $a1, 39
-	lw $a2, pointColor
+	lw $a2, playerBulletState
 	jal DrawPoint
 	
 	
-# Timers counter for enemies movement
-li $s1, 0
-li $s2, 250
+# Timer counters for bullets movement
+li $s3, 0
+li $s4, 15
+
+# Timer counters for enemies movement
+li $s5, 0
+li $s6, 250
 
 										
 # Wait and read buttons
@@ -1214,47 +1231,59 @@ Standby:
 	syscall		#
 		
 	addi $t0, $t0, -1 		# decrement counter
-	addi $s1, $s1, 1                # increment enemies counter
 	
-	bne $s1, $s2, Continue
+	addi $s3, $s3, 1                # increment bullets counter
+	addi $s5, $s5, 1		# increment enemies counter
 	
-	li $s1, 0
+	BulletsMovement:
 	
-	# Move enemy 1
-	li $a0, 1
-	lw $a1, enemy1Dir
+		bne $s3, $s4, EnemiesMovement
 		
-	jal MoveAgent
-	
-	# Move enemy 2
-	li $a0, 2
-	lw $a1, enemy2Dir
+		li $s3, 0
 		
-	jal MoveAgent
-	
-	# Move enemy 3
-	li $a0, 3
-	lw $a1, enemy3Dir
+		jal MoveBullets
 		
-	jal MoveAgent
-	
-	# Move enemy 4
-	li $a0, 4
-	lw $a1, enemy4Dir
+	EnemiesMovement:
 		
-	jal MoveAgent
+		bne $s5, $s6, Continue
 	
-	# Move enemy 5
-	li $a0, 5
-	lw $a1, enemy5Dir
+		li $s5, 0
 		
-	jal MoveAgent
+		# Move enemy 1
+		li $a0, 1
+		lw $a1, enemy1Dir
+		
+		#jal MoveAgent
 	
-	# Move enemy 6
-	li $a0, 6
-	lw $a1, enemy6Dir
+		# Move enemy 2
+		li $a0, 2
+		lw $a1, enemy2Dir
 		
-	jal MoveAgent
+		#jal MoveAgent
+	
+		# Move enemy 3
+		li $a0, 3
+		lw $a1, enemy3Dir
+		
+		#jal MoveAgent
+	
+		# Move enemy 4
+		li $a0, 4
+		lw $a1, enemy4Dir
+		
+		#jal MoveAgent
+	
+		# Move enemy 5
+		li $a0, 5
+		lw $a1, enemy5Dir
+		
+		#jal MoveAgent
+	
+		# Move enemy 6
+		li $a0, 6
+		lw $a1, enemy6Dir
+		
+		#jal MoveAgent
 		
 	Continue:
 		
@@ -1262,7 +1291,9 @@ Standby:
 		blez $t1, Standby
 				
 		jal KeyPressed			# see what was pushed
+		
 		sw $zero, 0xFFFF0000		# clear the button pushed bit
+		
 		j Standby
 				
 EndStandby:
@@ -1278,61 +1309,1358 @@ KeyPressed:
 
 	lw $a0, 0xFFFF0004
 	
-	Move_Up:
+	MoveUp:
 	
-		bne $a0, 119, Move_Down # W
+		bne $a0, 119, MoveDown # W
 		
 		li $a0, 0
 		li $a1, 0
 		
 		jal MoveAgent
 				
-		j Key_Done
+		j KeyDone
 		
-	Move_Down:
+	MoveDown:
 	
-		bne $a0, 115, Move_Left # S
+		bne $a0, 115, MoveLeft # S
 		
 		li $a0, 0
 		li $a1, 1
 		
 		jal MoveAgent
 				
-		j Key_Done
+		j KeyDone
 	
-	Move_Left:
+	MoveLeft:
 	
-		bne $a0, 97, Move_Right # A
+		bne $a0, 97, MoveRight # A
 		
 		li $a0, 0
 		li $a1, 2
 		
 		jal MoveAgent
 				
-		j Key_Done
+		j KeyDone
 
-	Move_Right:
+	MoveRight:
 	
-		bne $a0, 100, Key_None # D
+		bne $a0, 100, Shoot # D
 		
 		li $a0, 0
 		li $a1, 3
 		
 		jal MoveAgent
 				
-		j Key_Done	
+		j KeyDone	
 		
-	Key_None:
+	Shoot:
+	
+		bne $a0, 32, KeyNone # Space
+		
+		li $t0, 1
+		sw $t0, playerBulletActive
+		
+		lw $t0, playerDir
+		sw $t0, playerBulletDir
+		
+		BulletUpDir:
+		
+			bne $t0, 0, BulletDownDir
+		
+			lw $t1, playerPosX
+			addi $t1, $t1, 1
+			sw $t1, playerBulletPosX
+			move $a0, $t1
+			
+			lw $t1, playerPosY
+			addi $t1, $t1, -1
+			sw $t1, playerBulletPosY
+			move $a1, $t1
+			
+			lw $a2, playerBulletState
+						
+			jal DrawPoint
+		
+			j KeyDone		
+		
+		BulletDownDir:
+		
+			bne $t0, 1, BulletLeftDir
+		
+			lw $t1, playerPosX
+			addi $t1, $t1, 1
+			sw $t1, playerBulletPosX
+			move $a0, $t1
+			
+			lw $t1, playerPosY
+			addi $t1, $t1, 3
+			sw $t1, playerBulletPosY
+			move $a1, $t1
+			
+			lw $a2, playerBulletState
+						
+			jal DrawPoint
+		
+			j KeyDone		
+		
+		BulletLeftDir:
+		
+			bne $t0, 2, BulletRightDir
+		
+			lw $t1, playerPosX
+			addi $t1, $t1, -1
+			sw $t1, playerBulletPosX
+			move $a0, $t1
+			
+			lw $t1, playerPosY
+			addi $t1, $t1, 1
+			sw $t1, playerBulletPosY
+			move $a1, $t1
+			
+			lw $a2, playerBulletState
+						
+			jal DrawPoint
+		
+			j KeyDone	
+					
+		BulletRightDir:
+		
+			bne $t0, 3, KeyDone 
+		
+			lw $t1, playerPosX
+			addi $t1, $t1, 3
+			sw $t1, playerBulletPosX
+			move $a0, $t1
+			
+			lw $t1, playerPosY
+			addi $t1, $t1, 1
+			sw $t1, playerBulletPosY
+			move $a1, $t1
+			
+			lw $a2, playerBulletState
+						
+			jal DrawPoint
+		
+			j KeyDone			
+		
+	KeyNone:
 	
 		# Do nothing
 		
-	Key_Done:
+	KeyDone:
 			
 		lw $ra, 0($sp)
 		addi $sp, $sp, -4
 	
 		jr $ra
+		
+		
+MoveBullets:
+
+	addi $sp, $sp, -4
+	sw $ra, 0($sp)
+
+	MovePlayerBullets:
+		
+		lw $s0, playerBulletActive
+		
+		bne $s0, 1, MoveEnemyBullet
+		
+		lw $s0, playerBulletDir
+		
+		MovePlayerBulletsUp:
+		
+			bne $s0, 0, MovePlayerBulletsDown
+			
+			lw $s1, playerBulletPosX
+			lw $s2, playerBulletPosY
+			
+			move $a0, $s1
+			move $a1, $s2
+			lw $a2, backgroundColor
+			
+			jal DrawPoint
+							
+			addi $s2, $s2, -1
+			sw $s2, playerBulletPosY	
+						
+			CheckWallCollUp:
+			
+				move $a0, $s1
+				move $a1, $s2
+			
+				jal LoadColor
+			
+				lw $t0, wallColor
 				
+				bne $v0, $t0, CheckEnemyColUp
+			
+				move $a0, $s1
+				move $a1, $s2
+				lw $a2, wallColor
+				
+				jal DrawPoint
+				
+				li $t0, 0
+				sw $t0, playerBulletActive
+				
+				j MoveBulletDone			
+			
+			CheckEnemyColUp:
+			
+				CheckEnemy1ColUp: # red
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy1State
+				
+					bne $v0, $t0, CheckEnemy2ColUp
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy1PosX
+					lw $a1, enemy1PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+			
+				CheckEnemy2ColUp: # orange
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy2State
+				
+					bne $v0, $t0, CheckEnemy3ColUp
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy2PosX
+					lw $a1, enemy2PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+				
+				CheckEnemy3ColUp: # green
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy3State
+				
+					bne $v0, $t0, CheckEnemy4ColUp
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy3PosX
+					lw $a1, enemy3PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+				
+				CheckEnemy4ColUp: # light blue
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy4State
+				
+					bne $v0, $t0, CheckEnemy5ColUp
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy4PosX
+					lw $a1, enemy4PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+				
+				CheckEnemy5ColUp: # purple
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy5State
+				
+					bne $v0, $t0, CheckEnemy6ColUp
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy5PosX
+					lw $a1, enemy5PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+				
+				CheckEnemy6ColUp: # pink
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy6State
+				
+					bne $v0, $t0, BulletUp
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy6PosX
+					lw $a1, enemy6PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+			
+			BulletUp:
+			
+				move $a0, $s1
+				move $a1, $s2
+				lw $a2, playerBulletState
+				
+				jal DrawPoint
+				
+				j MoveBulletDone			
+			
+		MovePlayerBulletsDown:
+		
+			bne $s0, 1, MovePlayerBulletsLeft
+			
+			lw $s1, playerBulletPosX
+			lw $s2, playerBulletPosY
+			
+			move $a0, $s1
+			move $a1, $s2
+			lw $a2, backgroundColor
+			
+			jal DrawPoint
+							
+			addi $s2, $s2, 1
+			sw $s2, playerBulletPosY	
+						
+			CheckWallCollDown:
+			
+				move $a0, $s1
+				move $a1, $s2
+			
+				jal LoadColor
+			
+				lw $t0, wallColor
+				
+				bne $v0, $t0, CheckEnemyColDown
+			
+				move $a0, $s1
+				move $a1, $s2
+				lw $a2, wallColor
+				
+				jal DrawPoint
+				
+				li $t0, 0
+				sw $t0, playerBulletActive
+				
+				j MoveBulletDone			
+			
+			CheckEnemyColDown:
+			
+				CheckEnemy1ColDown: # red
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy1State
+				
+					bne $v0, $t0, CheckEnemy2ColDown
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy1PosX
+					lw $a1, enemy1PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+			
+				CheckEnemy2ColDown: # orange
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy2State
+				
+					bne $v0, $t0, CheckEnemy3ColDown
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy2PosX
+					lw $a1, enemy2PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+				
+				CheckEnemy3ColDown: # green
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy3State
+				
+					bne $v0, $t0, CheckEnemy4ColDown
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy3PosX
+					lw $a1, enemy3PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+				
+				CheckEnemy4ColDown: # light blue
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy4State
+				
+					bne $v0, $t0, CheckEnemy5ColDown
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy4PosX
+					lw $a1, enemy4PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+				
+				CheckEnemy5ColDown: # purple
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy5State
+				
+					bne $v0, $t0, CheckEnemy6ColDown
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy5PosX
+					lw $a1, enemy5PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+				
+				CheckEnemy6ColDown: # pink
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy6State
+				
+					bne $v0, $t0, BulletDown
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy6PosX
+					lw $a1, enemy6PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+			
+			BulletDown:
+			
+				move $a0, $s1
+				move $a1, $s2
+				lw $a2, playerBulletState
+				
+				jal DrawPoint
+				
+				j MoveBulletDone
+						
+		MovePlayerBulletsLeft:
+		
+			bne $s0, 2, MovePlayerBulletsRight
+			
+			lw $s1, playerBulletPosX
+			lw $s2, playerBulletPosY
+			
+			move $a0, $s1
+			move $a1, $s2
+			lw $a2, backgroundColor
+			
+			jal DrawPoint
+							
+			addi $s1, $s1, -1
+			sw $s1, playerBulletPosX
+						
+			CheckWallCollLeft:
+			
+				move $a0, $s1
+				move $a1, $s2
+			
+				jal LoadColor
+			
+				lw $t0, wallColor
+				
+				bne $v0, $t0, CheckEnemyColLeft
+			
+				move $a0, $s1
+				move $a1, $s2
+				lw $a2, wallColor
+				
+				jal DrawPoint
+				
+				li $t0, 0
+				sw $t0, playerBulletActive
+				
+				j MoveBulletDone			
+			
+			CheckEnemyColLeft:
+			
+				CheckEnemy1ColLeft: # red
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy1State
+				
+					bne $v0, $t0, CheckEnemy2ColLeft
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy1PosX
+					lw $a1, enemy1PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+			
+				CheckEnemy2ColLeft: # orange
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy2State
+				
+					bne $v0, $t0, CheckEnemy3ColLeft
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy2PosX
+					lw $a1, enemy2PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+				
+				CheckEnemy3ColLeft: # green
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy3State
+				
+					bne $v0, $t0, CheckEnemy4ColLeft
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy3PosX
+					lw $a1, enemy3PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+				
+				CheckEnemy4ColLeft: # light blue
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy4State
+				
+					bne $v0, $t0, CheckEnemy5ColLeft
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy4PosX
+					lw $a1, enemy4PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+				
+				CheckEnemy5ColLeft: # purple
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy5State
+				
+					bne $v0, $t0, CheckEnemy6ColLeft
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy5PosX
+					lw $a1, enemy5PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+				
+				CheckEnemy6ColLeft: # pink
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy6State
+				
+					bne $v0, $t0, BulletLeft
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy6PosX
+					lw $a1, enemy6PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+			
+			BulletLeft:
+			
+				move $a0, $s1
+				move $a1, $s2
+				lw $a2, playerBulletState
+				
+				jal DrawPoint
+				
+				j MoveBulletDone			
+			
+		MovePlayerBulletsRight:
+		
+			bne $s0, 3, MoveBulletDone
+			
+			lw $s1, playerBulletPosX
+			lw $s2, playerBulletPosY
+			
+			move $a0, $s1
+			move $a1, $s2
+			lw $a2, backgroundColor
+			
+			jal DrawPoint
+							
+			addi $s1, $s1, 1
+			sw $s1, playerBulletPosX
+						
+			CheckWallCollRight:
+			
+				move $a0, $s1
+				move $a1, $s2
+			
+				jal LoadColor
+			
+				lw $t0, wallColor
+				
+				bne $v0, $t0, CheckEnemyColRight
+			
+				move $a0, $s1
+				move $a1, $s2
+				lw $a2, wallColor
+				
+				jal DrawPoint
+				
+				li $t0, 0
+				sw $t0, playerBulletActive
+				
+				j MoveBulletDone			
+			
+			CheckEnemyColRight:
+			
+				CheckEnemy1ColRight: # red
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy1State
+				
+					bne $v0, $t0, CheckEnemy2ColRight
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy1PosX
+					lw $a1, enemy1PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+			
+				CheckEnemy2ColRight: # orange
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy2State
+				
+					bne $v0, $t0, CheckEnemy3ColRight
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy2PosX
+					lw $a1, enemy2PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+				
+				CheckEnemy3ColRight: # green
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy3State
+				
+					bne $v0, $t0, CheckEnemy4ColRight
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy3PosX
+					lw $a1, enemy3PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+				
+				CheckEnemy4ColRight: # light blue
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy4State
+				
+					bne $v0, $t0, CheckEnemy5ColRight
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy4PosX
+					lw $a1, enemy4PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+				
+				CheckEnemy5ColRight: # purple
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy5State
+				
+					bne $v0, $t0, CheckEnemy6ColRight
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy5PosX
+					lw $a1, enemy5PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+				
+				CheckEnemy6ColRight: # pink
+					
+					move $a0, $s1
+					move $a1, $s2
+			
+					jal LoadColor
+			
+					lw $t0, enemy6State
+				
+					bne $v0, $t0, BulletRight
+			
+					move $a0, $s1
+					move $a1, $s2
+					lw $a2, backgroundColor
+				
+					jal DrawPoint
+				
+					li $t0, 0
+					sw $t0, playerBulletActive
+					
+					lw $a0, enemy6PosX
+					lw $a1, enemy6PosY
+					
+					jal EraseCompleteAgent
+					
+					lw $a0, playerScorePosX
+					lw $a1, playerScorePosY
+					lw $a2, playerScoreState
+					
+					jal DrawPoint
+					
+					lw $t0, playerScoreNumber
+					addi $t0, $t0, 1
+					sw $t0, playerScoreNumber
+					
+					lw $t0, playerScorePosX
+					addi $t0, $t0, 2
+					sw $t0, playerScorePosX
+					
+					j MoveBulletDone
+			
+			BulletRight:
+			
+				move $a0, $s1
+				move $a1, $s2
+				lw $a2, playerBulletState
+				
+				jal DrawPoint
+				
+				j MoveBulletDone
+			
+	MoveEnemyBullet:	
+			
+	MoveBulletDone:
+	
+		lw $ra, 0($sp)
+		addi $sp, $sp, 4
+		
+		jr $ra
+									
 				
 # MoveAgent will change the direction of the player an then try to move in the given direction		
 # $a0 is the agent
@@ -1553,7 +2881,7 @@ MoveAgent:
 		
 		AdvanceBlockEnemy6:
 		
-			# Do nothing
+			j MoveAgentDone
 		
 	MoveAgentDone:
 	
@@ -3017,45 +4345,46 @@ EraseAgent:
 		lw $ra, 0($sp)	
 		addi $sp, $sp, 12
 		
-		jr $ra	
-	
-		
-
-
-
-	#addi $sp, $sp, -12
-	#sw $ra, 0($sp)
-	#sw $a0, 4($sp)
-	#sw $a1, 8($sp)
-	
-	#lw $a0, 4($sp)
-	#lw $a1, 8($sp)
-	#li $a2, 0
-	#addi $a3, $a0, 2
-		
-	#jal DrawHorizontalLine	
-	
-	#lw $a0, 4($sp)
-	#lw $a1, 8($sp)
-	#addi $a1, $a1, 1
-	#li $a2, 0
-	#addi $a3, $a0, 2
-		
-	#jal DrawHorizontalLine	
-	
-	#lw $a0, 4($sp)
-	#lw $a1, 8($sp)
-	#addi $a1, $a1, 2
-	#li $a2, 0
-	#addi $a3, $a0, 2
-		
-	#jal DrawHorizontalLine	
-		
-	#lw $ra, 0($sp)	
-	#addi $sp, $sp, 12
-		
-	#jr $ra																																
+		jr $ra																																
+			
 																																				
+# $a0 x position
+# $a1 y position
+EraseCompleteAgent:
+
+	addi $sp, $sp, -12
+	sw $ra, 0($sp)
+	sw $a0, 4($sp)
+	sw $a1, 8($sp)
+		
+	lw $a0, 4($sp)
+	lw $a1, 8($sp)
+	li $a2, 0
+	addi $a3, $a0, 2
+		
+	jal DrawHorizontalLine
+			
+	lw $a0, 4($sp)
+	lw $a1, 8($sp)
+	addi $a1, $a1, 1
+	li $a2, 0
+	addi $a3, $a0, 2
+		
+	jal DrawHorizontalLine
+		
+	lw $a0, 4($sp)
+	lw $a1, 8($sp)
+	addi $a1, $a1, 2
+	li $a2, 0
+	addi $a3, $a0, 2
+		
+	jal DrawHorizontalLine
+		
+	lw $ra, 0($sp)	
+	addi $sp, $sp, 12
+		
+	jr $ra																																																																						
+																																																																																																																																																																																																																																																																																																												
 			
 # $a0 the x starting coordinate
 # $a1 the y coordinate
