@@ -19,6 +19,7 @@
 	playerPosY:		.word 2
 	playerDir: 		.word 0x00000003
 	playerState:		.word 0x00ffc800
+	playerActive:		.word 1
 	
 	# PlayerBullet
 	playerBulletActive: 	.word 0
@@ -38,36 +39,42 @@
 	enemy1PosY:		.word 2
 	enemy1Dir: 		.word 0x00000002
 	enemy1State:		.word 0x00fc0303 # Red
+	enemy1Active:		.word 1
 	
 	# Enemy 2
 	enemy2PosX:		.word 53
 	enemy2PosY:		.word 20
 	enemy2Dir: 		.word 0x00000002
 	enemy2State:		.word 0x00ff6f00 # Orange
+	enemy2Active:		.word 1
 	
 	# Enemy 3
 	enemy3PosX:		.word 19
 	enemy3PosY:		.word 32
 	enemy3Dir: 		.word 0x00000000
 	enemy3State:		.word 0x0011ff00 # Green
+	enemy3Active:		.word 1
 	
 	# Enemy 4
 	enemy4PosX:		.word 31
 	enemy4PosY:		.word 32
 	enemy4Dir: 		.word 0x00000000
 	enemy4State:		.word 0x0000e5ff # Light blue
+	enemy4Active:		.word 1
 	
 	# Enemy 5
 	enemy5PosX:		.word 43
 	enemy5PosY:		.word 32
 	enemy5Dir: 		.word 0x00000000
 	enemy5State:		.word 0x007700ff # Purple
+	enemy5Active:		.word 1
 	
 	# Enemy 6
 	enemy6PosX:		.word 9
 	enemy6PosY:		.word 20
 	enemy6Dir: 		.word 0x00000003
 	enemy6State:		.word 0x00ff00e6 # Pink
+	enemy6Active:		.word 1
 
 .text
 
@@ -1147,66 +1154,66 @@ DrawAgentPoints:
 	#jal DrawPoint
 
 	# Second round
-	li $a0, 26
-	li $a1, 39
-	lw $a2, playerBulletState
-	jal DrawPoint
+	#li $a0, 26
+	#li $a1, 39
+	#lw $a2, playerBulletState
+	#jal DrawPoint
 	
-	li $a0, 28
-	li $a1, 39
-	lw $a2, playerBulletState
-	jal DrawPoint
+	#li $a0, 28
+	#li $a1, 39
+	#lw $a2, playerBulletState
+	#jal DrawPoint
 	
-	li $a0, 30
-	li $a1, 39
-	lw $a2, playerBulletState
-	jal DrawPoint
+	#li $a0, 30
+	#li $a1, 39
+	#lw $a2, playerBulletState
+	#jal DrawPoint
 	
-	li $a0, 32
-	li $a1, 39
-	lw $a2, playerBulletState
-	jal DrawPoint
+	#li $a0, 32
+	#li $a1, 39
+	#lw $a2, playerBulletState
+	#jal DrawPoint
 	
-	li $a0, 34
-	li $a1, 39
-	lw $a2, playerBulletState
-	jal DrawPoint
+	#li $a0, 34
+	#li $a1, 39
+	#lw $a2, playerBulletState
+	#jal DrawPoint
 	
-	li $a0, 36
-	li $a1, 39
-	lw $a2, playerBulletState
-	jal DrawPoint
+	#li $a0, 36
+	#li $a1, 39
+	#lw $a2, playerBulletState
+	#jal DrawPoint
 	
 	# Third round
-	li $a0, 38
-	li $a1, 39
-	lw $a2, playerBulletState
-	jal DrawPoint
+	#li $a0, 38
+	#li $a1, 39
+	#lw $a2, playerBulletState
+	#jal DrawPoint
 	
-	li $a0, 40
-	li $a1, 39
-	lw $a2, playerBulletState
-	jal DrawPoint
+	#li $a0, 40
+	#li $a1, 39
+	#lw $a2, playerBulletState
+	#jal DrawPoint
 	
-	li $a0, 42
-	li $a1, 39
-	lw $a2, playerBulletState
-	jal DrawPoint
+	#li $a0, 42
+	#li $a1, 39
+	#lw $a2, playerBulletState
+	#jal DrawPoint
 	
-	li $a0, 44
-	li $a1, 39
-	lw $a2, playerBulletState
-	jal DrawPoint
+	#li $a0, 44
+	#li $a1, 39
+	#lw $a2, playerBulletState
+	#jal DrawPoint
 	
-	li $a0, 46
-	li $a1, 39
-	lw $a2, playerBulletState
-	jal DrawPoint
+	#li $a0, 46
+	#li $a1, 39
+	#lw $a2, playerBulletState
+	#jal DrawPoint
 	
-	li $a0, 48
-	li $a1, 39
-	lw $a2, playerBulletState
-	jal DrawPoint
+	#li $a0, 48
+	#li $a1, 39
+	#lw $a2, playerBulletState
+	#jal DrawPoint
 	
 	
 # Timer counters for bullets movement
@@ -1248,42 +1255,72 @@ Standby:
 		bne $s5, $s6, Continue
 	
 		li $s5, 0
+				
+		MoveEnemy1:
 		
-		# Move enemy 1
-		li $a0, 1
-		lw $a1, enemy1Dir
+			lw $t0, enemy1Active
 		
-		#jal MoveAgent
+			bne $t0, 1, MoveEnemy2 
+		
+			li $a0, 1
+			lw $a1, enemy1Dir
+		
+			jal MoveAgent
 	
-		# Move enemy 2
-		li $a0, 2
-		lw $a1, enemy2Dir
+		MoveEnemy2:
 		
-		#jal MoveAgent
+			lw $t0, enemy2Active
+		
+			bne $t0, 1, MoveEnemy3
+			
+			li $a0, 2
+			lw $a1, enemy2Dir
+		
+			jal MoveAgent
 	
-		# Move enemy 3
-		li $a0, 3
-		lw $a1, enemy3Dir
+		MoveEnemy3:
 		
-		#jal MoveAgent
+			lw $t0, enemy3Active
+		
+			bne $t0, 1, MoveEnemy4
+			
+			li $a0, 3
+			lw $a1, enemy3Dir
+		
+			jal MoveAgent
 	
-		# Move enemy 4
-		li $a0, 4
-		lw $a1, enemy4Dir
+		MoveEnemy4:
 		
-		#jal MoveAgent
+			lw $t0, enemy4Active
+		
+			bne $t0, 1, MoveEnemy5
+			
+			li $a0, 4
+			lw $a1, enemy4Dir
+		
+			jal MoveAgent
 	
-		# Move enemy 5
-		li $a0, 5
-		lw $a1, enemy5Dir
+		MoveEnemy5:
 		
-		#jal MoveAgent
+			lw $t0, enemy5Active
+		
+			bne $t0, 1, MoveEnemy6 
+			
+			li $a0, 5
+			lw $a1, enemy5Dir
+		
+			jal MoveAgent
 	
-		# Move enemy 6
-		li $a0, 6
-		lw $a1, enemy6Dir
+		MoveEnemy6:
 		
-		#jal MoveAgent
+			lw $t0, enemy6Active
+		
+			bne $t0, 1, Continue 
+			
+			li $a0, 6
+			lw $a1, enemy6Dir
+		
+			jal MoveAgent
 		
 	Continue:
 		
@@ -1528,6 +1565,9 @@ MoveBullets:
 					li $t0, 0
 					sw $t0, playerBulletActive
 					
+					li $t0, 0
+					sw $t0, enemy1Active
+					
 					lw $a0, enemy1PosX
 					lw $a1, enemy1PosY
 					
@@ -1568,6 +1608,9 @@ MoveBullets:
 				
 					li $t0, 0
 					sw $t0, playerBulletActive
+					
+					li $t0, 0
+					sw $t0, enemy2Active
 					
 					lw $a0, enemy2PosX
 					lw $a1, enemy2PosY
@@ -1610,6 +1653,9 @@ MoveBullets:
 					li $t0, 0
 					sw $t0, playerBulletActive
 					
+					li $t0, 0
+					sw $t0, enemy3Active
+					
 					lw $a0, enemy3PosX
 					lw $a1, enemy3PosY
 					
@@ -1650,6 +1696,9 @@ MoveBullets:
 				
 					li $t0, 0
 					sw $t0, playerBulletActive
+					
+					li $t0, 0
+					sw $t0, enemy4Active
 					
 					lw $a0, enemy4PosX
 					lw $a1, enemy4PosY
@@ -1692,6 +1741,9 @@ MoveBullets:
 					li $t0, 0
 					sw $t0, playerBulletActive
 					
+					li $t0, 0
+					sw $t0, enemy5Active
+					
 					lw $a0, enemy5PosX
 					lw $a1, enemy5PosY
 					
@@ -1732,6 +1784,9 @@ MoveBullets:
 				
 					li $t0, 0
 					sw $t0, playerBulletActive
+					
+					li $t0, 0
+					sw $t0, enemy6Active
 					
 					lw $a0, enemy6PosX
 					lw $a1, enemy6PosY
@@ -1824,6 +1879,9 @@ MoveBullets:
 					li $t0, 0
 					sw $t0, playerBulletActive
 					
+					li $t0, 0
+					sw $t0, enemy1Active
+					
 					lw $a0, enemy1PosX
 					lw $a1, enemy1PosY
 					
@@ -1864,6 +1922,9 @@ MoveBullets:
 				
 					li $t0, 0
 					sw $t0, playerBulletActive
+					
+					li $t0, 0
+					sw $t0, enemy2Active
 					
 					lw $a0, enemy2PosX
 					lw $a1, enemy2PosY
@@ -1906,6 +1967,9 @@ MoveBullets:
 					li $t0, 0
 					sw $t0, playerBulletActive
 					
+					li $t0, 0
+					sw $t0, enemy3Active
+					
 					lw $a0, enemy3PosX
 					lw $a1, enemy3PosY
 					
@@ -1946,6 +2010,9 @@ MoveBullets:
 				
 					li $t0, 0
 					sw $t0, playerBulletActive
+					
+					li $t0, 0
+					sw $t0, enemy4Active
 					
 					lw $a0, enemy4PosX
 					lw $a1, enemy4PosY
@@ -1988,6 +2055,9 @@ MoveBullets:
 					li $t0, 0
 					sw $t0, playerBulletActive
 					
+					li $t0, 0
+					sw $t0, enemy5Active
+					
 					lw $a0, enemy5PosX
 					lw $a1, enemy5PosY
 					
@@ -2028,6 +2098,9 @@ MoveBullets:
 				
 					li $t0, 0
 					sw $t0, playerBulletActive
+					
+					li $t0, 0
+					sw $t0, enemy6Active
 					
 					lw $a0, enemy6PosX
 					lw $a1, enemy6PosY
@@ -2120,6 +2193,9 @@ MoveBullets:
 					li $t0, 0
 					sw $t0, playerBulletActive
 					
+					li $t0, 0
+					sw $t0, enemy1Active
+					
 					lw $a0, enemy1PosX
 					lw $a1, enemy1PosY
 					
@@ -2160,6 +2236,9 @@ MoveBullets:
 				
 					li $t0, 0
 					sw $t0, playerBulletActive
+					
+					li $t0, 0
+					sw $t0, enemy2Active
 					
 					lw $a0, enemy2PosX
 					lw $a1, enemy2PosY
@@ -2202,6 +2281,9 @@ MoveBullets:
 					li $t0, 0
 					sw $t0, playerBulletActive
 					
+					li $t0, 0
+					sw $t0, enemy3Active
+					
 					lw $a0, enemy3PosX
 					lw $a1, enemy3PosY
 					
@@ -2242,6 +2324,9 @@ MoveBullets:
 				
 					li $t0, 0
 					sw $t0, playerBulletActive
+					
+					li $t0, 0
+					sw $t0, enemy4Active
 					
 					lw $a0, enemy4PosX
 					lw $a1, enemy4PosY
@@ -2284,6 +2369,9 @@ MoveBullets:
 					li $t0, 0
 					sw $t0, playerBulletActive
 					
+					li $t0, 0
+					sw $t0, enemy5Active
+					
 					lw $a0, enemy5PosX
 					lw $a1, enemy5PosY
 					
@@ -2324,6 +2412,9 @@ MoveBullets:
 				
 					li $t0, 0
 					sw $t0, playerBulletActive
+					
+					li $t0, 0
+					sw $t0, enemy6Active
 					
 					lw $a0, enemy6PosX
 					lw $a1, enemy6PosY
@@ -2416,6 +2507,9 @@ MoveBullets:
 					li $t0, 0
 					sw $t0, playerBulletActive
 					
+					li $t0, 0
+					sw $t0, enemy1Active
+					
 					lw $a0, enemy1PosX
 					lw $a1, enemy1PosY
 					
@@ -2456,6 +2550,9 @@ MoveBullets:
 				
 					li $t0, 0
 					sw $t0, playerBulletActive
+					
+					li $t0, 0
+					sw $t0, enemy2Active
 					
 					lw $a0, enemy2PosX
 					lw $a1, enemy2PosY
@@ -2498,6 +2595,9 @@ MoveBullets:
 					li $t0, 0
 					sw $t0, playerBulletActive
 					
+					li $t0, 0
+					sw $t0, enemy3Active
+					
 					lw $a0, enemy3PosX
 					lw $a1, enemy3PosY
 					
@@ -2538,6 +2638,9 @@ MoveBullets:
 				
 					li $t0, 0
 					sw $t0, playerBulletActive
+					
+					li $t0, 0
+					sw $t0, enemy4Active
 					
 					lw $a0, enemy4PosX
 					lw $a1, enemy4PosY
@@ -2580,6 +2683,9 @@ MoveBullets:
 					li $t0, 0
 					sw $t0, playerBulletActive
 					
+					li $t0, 0
+					sw $t0, enemy5Active
+					
 					lw $a0, enemy5PosX
 					lw $a1, enemy5PosY
 					
@@ -2620,6 +2726,9 @@ MoveBullets:
 				
 					li $t0, 0
 					sw $t0, playerBulletActive
+					
+					li $t0, 0
+					sw $t0, enemy6Active
 					
 					lw $a0, enemy6PosX
 					lw $a1, enemy6PosY
