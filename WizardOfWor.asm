@@ -1120,7 +1120,7 @@ DrawRadar:
 	jal DrawVerticalLine
 		
 	
-DrawAgentPoints:
+#DrawAgentPoints:
 
 	# First round
 	#li $a0, 14
@@ -4694,6 +4694,8 @@ CollisionDirection:
 		
 		Pixel0Up:
 		
+			addi $a0, $a0, -1
+		
 			jal LoadColor
 			
 			beq $v0, 0, Pixel1Up
@@ -4732,6 +4734,18 @@ CollisionDirection:
 			
 			jal LoadColor
 			
+			beq $v0, 0, Pixel4Up	
+					
+			li $v0, 1
+			
+			j CollDone
+			
+		Pixel4Up: 
+		
+			addi $a0, $a0, 1
+			
+			jal LoadColor
+			
 			beq $v0, 0, NoCollUp	
 					
 			li $v0, 1
@@ -4751,6 +4765,8 @@ CollisionDirection:
 		addi $a1, $a1, 4 # ajust the coordinate for down
 		
 		Pixel0Down:
+		
+			addi $a0, $a0, -1
 		
 			jal LoadColor
 			
@@ -4790,6 +4806,18 @@ CollisionDirection:
 			
 			jal LoadColor
 			
+			beq $v0, 0, Pixel4Down	
+					
+			li $v0, 1
+			
+			j CollDone
+			
+		Pixel4Down: 
+		
+			addi $a0, $a0, 1
+			
+			jal LoadColor
+			
 			beq $v0, 0, NoCollDown	
 					
 			li $v0, 1
@@ -4806,9 +4834,11 @@ CollisionDirection:
 	
 		bne $a3, 2, CollRight
 		
-		addi $a0, $a0, -2 # ajust the coordinate for left (-1)
+		addi $a0, $a0, -2 # ajust the coordinate for left
 		
 		Pixel0Left:
+		
+			addi $a1, $a1, -1
 		
 			jal LoadColor
 			
@@ -4848,6 +4878,18 @@ CollisionDirection:
 			
 			jal LoadColor
 			
+			beq $v0, 0, Pixel4Left	
+					
+			li $v0, 1
+			
+			j CollDone
+			
+		Pixel4Left: 
+		
+			addi $a1, $a1, 1
+			
+			jal LoadColor
+			
 			beq $v0, 0, NoCollLeft	
 					
 			li $v0, 1
@@ -4867,6 +4909,8 @@ CollisionDirection:
 		addi $a0, $a0, 4 # ajust the coordinate for right
 		
 		Pixel0Right:
+		
+			addi $a1, $a1, -1
 		
 			jal LoadColor
 			
@@ -4901,6 +4945,18 @@ CollisionDirection:
 			j CollDone
 			
 		Pixel3Right: 
+		
+			addi $a1, $a1, 1
+			
+			jal LoadColor
+			
+			beq $v0, 0, Pixel4Right	
+					
+			li $v0, 1
+			
+			j CollDone
+			
+		Pixel4Right: 
 		
 			addi $a1, $a1, 1
 			
