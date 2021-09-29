@@ -1101,7 +1101,7 @@ DrawRadar:
 	
 	# Second level
 	li $a0, 19
-	li $a1, 58
+	li $a1, 61
 	lw $a2, wallColor
 	li $a3, 45
 	jal DrawHorizontalLine
@@ -1110,110 +1110,14 @@ DrawRadar:
 	li $a0, 19
 	li $a1, 42
 	lw $a2, wallColor
-	li $a3, 58
+	li $a3, 61
 	jal DrawVerticalLine
 	
 	li $a0, 45
 	li $a1, 42
 	lw $a2, wallColor
-	li $a3, 58
+	li $a3, 61
 	jal DrawVerticalLine
-		
-	
-#DrawAgentPoints:
-
-	# First round
-	#li $a0, 14
-	#li $a1, 39
-	#lw $a2, playerBulletState
-	#jal DrawPoint
-	
-	#li $a0, 16
-	#li $a1, 39
-	#lw $a2, playerBulletState
-	#jal DrawPoint
-	
-	#li $a0, 18
-	#li $a1, 39
-	#lw $a2, playerBulletState
-	#jal DrawPoint
-	
-	#li $a0, 20
-	#li $a1, 39
-	#lw $a2, playerBulletState
-	#jal DrawPoint
-	
-	#li $a0, 22
-	#li $a1, 39
-	#lw $a2, playerBulletState
-	#jal DrawPoint
-	
-	#li $a0, 24
-	#li $a1, 39
-	#lw $a2, playerBulletState
-	#jal DrawPoint
-
-	# Second round
-	#li $a0, 26
-	#li $a1, 39
-	#lw $a2, playerBulletState
-	#jal DrawPoint
-	
-	#li $a0, 28
-	#li $a1, 39
-	#lw $a2, playerBulletState
-	#jal DrawPoint
-	
-	#li $a0, 30
-	#li $a1, 39
-	#lw $a2, playerBulletState
-	#jal DrawPoint
-	
-	#li $a0, 32
-	#li $a1, 39
-	#lw $a2, playerBulletState
-	#jal DrawPoint
-	
-	#li $a0, 34
-	#li $a1, 39
-	#lw $a2, playerBulletState
-	#jal DrawPoint
-	
-	#li $a0, 36
-	#li $a1, 39
-	#lw $a2, playerBulletState
-	#jal DrawPoint
-	
-	# Third round
-	#li $a0, 38
-	#li $a1, 39
-	#lw $a2, playerBulletState
-	#jal DrawPoint
-	
-	#li $a0, 40
-	#li $a1, 39
-	#lw $a2, playerBulletState
-	#jal DrawPoint
-	
-	#li $a0, 42
-	#li $a1, 39
-	#lw $a2, playerBulletState
-	#jal DrawPoint
-	
-	#li $a0, 44
-	#li $a1, 39
-	#lw $a2, playerBulletState
-	#jal DrawPoint
-	
-	#li $a0, 46
-	#li $a1, 39
-	#lw $a2, playerBulletState
-	#jal DrawPoint
-	
-	#li $a0, 48
-	#li $a1, 39
-	#lw $a2, playerBulletState
-	#jal DrawPoint
 	
 	
 # Timer counters for bullets movement
@@ -1321,6 +1225,8 @@ Standby:
 			lw $a1, enemy6Dir
 		
 			jal MoveAgent
+			
+	# CheckNewRound:
 						
 	CheckEndGame:
 	
@@ -3167,6 +3073,16 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
+			lw $a0, enemy1PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy1PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
+			
 			# Make the test to see if there is collision
 			li $a0, 1 # the enemy 1
 			li $a1, 0 # requiered for recursion
@@ -3185,7 +3101,17 @@ TryMoveAgent:
 			lw $a3, enemy1Dir
 			
 			jal DrawAgent
-				
+			
+			lw $a0, enemy1PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy1PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy1State			
+			
+			jal DrawPoint
+			
 			j TryMoveAgentDone
 				
 			ChangeEnemy1DirUp:
@@ -3212,6 +3138,16 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
+			lw $a0, enemy1PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy1PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
+			
 			# Make the test to see if there is collision
 			li $a0, 1 # the enemy 1
 			li $a1, 0 # requiered for recursion
@@ -3230,6 +3166,16 @@ TryMoveAgent:
 			lw $a3, enemy1Dir
 		
 			jal DrawAgent
+			
+			lw $a0, enemy1PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy1PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy1State			
+			
+			jal DrawPoint
 		
 			j TryMoveAgentDone
 				
@@ -3256,6 +3202,16 @@ TryMoveAgent:
 			lw $a2, enemy1Dir
 			
 			jal EraseAgent
+			
+			lw $a0, enemy1PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy1PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
 				
 			# Make the test to see if there is collision
 			li $a0, 1 # the enemy 1
@@ -3275,6 +3231,16 @@ TryMoveAgent:
 			lw $a3, enemy1Dir
 			
 			jal DrawAgent
+			
+			lw $a0, enemy1PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy1PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy1State			
+			
+			jal DrawPoint
 			
 			j TryMoveAgentDone
 				
@@ -3302,6 +3268,16 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
+			lw $a0, enemy1PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy1PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
+			
 			# Make the test to see if there is collision
 			li $a0, 1 # the enemy 1
 			li $a1, 0 # requiered for recursion
@@ -3320,6 +3296,16 @@ TryMoveAgent:
 			lw $a3, enemy1Dir
 			
 			jal DrawAgent
+			
+			lw $a0, enemy1PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy1PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy1State			
+			
+			jal DrawPoint
 			
 			j TryMoveAgentDone
 				
@@ -3353,6 +3339,16 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
+			lw $a0, enemy2PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy2PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
+			
 			# Make the test to see if there is collision
 			li $a0, 2 # the enemy 2
 			li $a1, 0 # requiered for recursion
@@ -3371,6 +3367,16 @@ TryMoveAgent:
 			lw $a3, enemy2Dir
 			
 			jal DrawAgent
+			
+			lw $a0, enemy2PosX
+ 			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy2PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy2State
+			
+			jal DrawPoint
 				
 			j TryMoveAgentDone
 				
@@ -3398,6 +3404,16 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
+			lw $a0, enemy2PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy2PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
+			
 			# Make the test to see if there is collision
 			li $a0, 2 # the enemy 2
 			li $a1, 0 # requiered for recursion
@@ -3416,6 +3432,16 @@ TryMoveAgent:
 			lw $a3, enemy2Dir
 			
 			jal DrawAgent
+			
+			lw $a0, enemy2PosX
+            		srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy2PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy2State
+			
+			jal DrawPoint
 			
 			j TryMoveAgentDone
 				
@@ -3442,6 +3468,16 @@ TryMoveAgent:
 			lw $a2, enemy2Dir
 			
 			jal EraseAgent
+			
+			lw $a0, enemy2PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy2PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
 				
 			# Make the test to see if there is collision
 			li $a0, 2 # the enemy 2
@@ -3461,6 +3497,16 @@ TryMoveAgent:
 			lw $a3, enemy2Dir
 		
 			jal DrawAgent
+			
+			lw $a0, enemy2PosX
+          		srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy2PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy2State
+			
+			jal DrawPoint
 			
 			j TryMoveAgentDone
 				
@@ -3488,6 +3534,16 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
+			lw $a0, enemy2PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy2PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
+			
 			# Make the test to see if there is collision
 			li $a0, 2 # the enemy 2
 			li $a1, 0 # requiered for recursion
@@ -3506,6 +3562,16 @@ TryMoveAgent:
 			lw $a3, enemy2Dir
 			
 			jal DrawAgent
+			
+			lw $a0, enemy2PosX
+            		srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy2PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy2State
+			
+			jal DrawPoint
 			
 			j TryMoveAgentDone
 				
@@ -3539,6 +3605,16 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
+			lw $a0, enemy3PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy3PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
+			
 			# Make the test to see if there is collision
 			li $a0, 3 # the enemy 3
 			li $a1, 0 # requiered for recursion
@@ -3557,6 +3633,16 @@ TryMoveAgent:
 			lw $a3, enemy3Dir
 			
 			jal DrawAgent
+			
+			lw $a0, enemy3PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy3PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy3State			
+			
+			jal DrawPoint
 				
 			j TryMoveAgentDone
 				
@@ -3584,6 +3670,16 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
+			lw $a0, enemy3PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy3PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
+			
 			# Make the test to see if there is collision
 			li $a0, 3 # the enemy 3
 			li $a1, 0 # requiered for recursion
@@ -3603,6 +3699,16 @@ TryMoveAgent:
 		
 			jal DrawAgent
 			
+			lw $a0, enemy3PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy3PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy3State			
+			
+			jal DrawPoint
+						
 			j TryMoveAgentDone
 				
 			ChangeEnemy3DirDown:
@@ -3628,6 +3734,16 @@ TryMoveAgent:
 			lw $a2, enemy3Dir
 			
 			jal EraseAgent
+			
+			lw $a0, enemy3PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy3PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
 				
 			# Make the test to see if there is collision
 			li $a0, 3 # the enemy 3
@@ -3647,6 +3763,16 @@ TryMoveAgent:
 			lw $a3, enemy3Dir
 			
 			jal DrawAgent
+			
+			lw $a0, enemy3PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy3PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy3State			
+			
+			jal DrawPoint
 			
 			j TryMoveAgentDone
 				
@@ -3674,6 +3800,16 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
+			lw $a0, enemy3PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy3PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
+			
 			# Make the test to see if there is collision
 			li $a0, 3 # the enemy 3
 			li $a1, 0 # requiered for recursion
@@ -3692,6 +3828,16 @@ TryMoveAgent:
 			lw $a3, enemy3Dir
 			
 			jal DrawAgent
+			
+			lw $a0, enemy3PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy3PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy3State			
+			
+			jal DrawPoint
 			
 			j TryMoveAgentDone
 				
@@ -3725,6 +3871,16 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
+			lw $a0, enemy4PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy4PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
+			
 			# Make the test to see if there is collision
 			li $a0, 4 # the enemy 4
 			li $a1, 0 # requiered for recursion
@@ -3743,6 +3899,16 @@ TryMoveAgent:
 			lw $a3, enemy4Dir
 			
 			jal DrawAgent
+			
+			lw $a0, enemy4PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy4PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy4State			
+			
+			jal DrawPoint
 				
 			j TryMoveAgentDone
 				
@@ -3770,6 +3936,16 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
+			lw $a0, enemy4PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy4PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
+			
 			# Make the test to see if there is collision
 			li $a0, 4 # the enemy 4
 			li $a1, 0 # requiered for recursion
@@ -3788,6 +3964,16 @@ TryMoveAgent:
 			lw $a3, enemy4Dir
 			
 			jal DrawAgent
+			
+			lw $a0, enemy4PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy4PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy4State			
+			
+			jal DrawPoint
 			
 			j TryMoveAgentDone
 				
@@ -3814,6 +4000,16 @@ TryMoveAgent:
 			lw $a2, enemy4Dir
 			
 			jal EraseAgent
+			
+			lw $a0, enemy4PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy4PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
 				
 			# Make the test to see if there is collision
 			li $a0, 4 # the enemy 4
@@ -3833,6 +4029,16 @@ TryMoveAgent:
 			lw $a3, enemy4Dir
 			
 			jal DrawAgent
+			
+			lw $a0, enemy4PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy4PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy4State			
+			
+			jal DrawPoint
 			
 			j TryMoveAgentDone
 				
@@ -3860,6 +4066,16 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
+			lw $a0, enemy4PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy4PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
+			
 			# Make the test to see if there is collision
 			li $a0, 4 # the enemy 4
 			li $a1, 0 # requiered for recursion
@@ -3878,6 +4094,16 @@ TryMoveAgent:
 			lw $a3, enemy4Dir
 		
 			jal DrawAgent
+			
+			lw $a0, enemy4PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy4PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy4State			
+			
+			jal DrawPoint
 		
 			j TryMoveAgentDone
 				
@@ -3911,6 +4137,16 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
+			lw $a0, enemy5PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy5PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
+			
 			# Make the test to see if there is collision
 			li $a0, 5 # the enemy 5
 			li $a1, 0 # requiered for recursion
@@ -3929,6 +4165,16 @@ TryMoveAgent:
 			lw $a3, enemy5Dir
 			
 			jal DrawAgent
+			
+			lw $a0, enemy5PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy5PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy5State			
+			
+			jal DrawPoint
 				
 			j TryMoveAgentDone
 				
@@ -3956,6 +4202,16 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
+			lw $a0, enemy5PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy5PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
+			
 			# Make the test to see if there is collision
 			li $a0, 5 # the enemy 5
 			li $a1, 0 # requiered for recursion
@@ -3974,6 +4230,16 @@ TryMoveAgent:
 			lw $a3, enemy5Dir
 			
 			jal DrawAgent
+			
+			lw $a0, enemy5PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy5PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy5State			
+			
+			jal DrawPoint
 			
 			j TryMoveAgentDone
 				
@@ -4000,6 +4266,16 @@ TryMoveAgent:
 			lw $a2, enemy5Dir
 			
 			jal EraseAgent
+			
+			lw $a0, enemy5PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy5PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
 				
 			# Make the test to see if there is collision
 			li $a0, 5 # the enemy 5
@@ -4019,6 +4295,16 @@ TryMoveAgent:
 			lw $a3, enemy5Dir
 			
 			jal DrawAgent
+			
+			lw $a0, enemy5PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy5PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy5State			
+			
+			jal DrawPoint
 			
 			j TryMoveAgentDone
 				
@@ -4046,6 +4332,16 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
+			lw $a0, enemy5PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy5PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
+			
 			# Make the test to see if there is collision
 			li $a0, 5 # the enemy 5
 			li $a1, 0 # requiered for recursion
@@ -4064,6 +4360,16 @@ TryMoveAgent:
 			lw $a3, enemy5Dir
 			
 			jal DrawAgent
+			
+			lw $a0, enemy5PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy5PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy5State			
+			
+			jal DrawPoint
 			
 			j TryMoveAgentDone
 				
@@ -4097,6 +4403,16 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
+			lw $a0, enemy6PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy6PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
+			
 			# Make the test to see if there is collision
 			li $a0, 6 # the enemy 6
 			li $a1, 0 # requiered for recursion
@@ -4115,6 +4431,16 @@ TryMoveAgent:
 			lw $a3, enemy6Dir
 			
 			jal DrawAgent
+			
+			lw $a0, enemy6PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy6PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy6State			
+			
+			jal DrawPoint
 				
 			j TryMoveAgentDone
 				
@@ -4142,6 +4468,16 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
+			lw $a0, enemy6PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy6PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
+			
 			# Make the test to see if there is collision
 			li $a0, 6 # the enemy 6
 			li $a1, 0 # requiered for recursion
@@ -4160,6 +4496,16 @@ TryMoveAgent:
 			lw $a3, enemy6Dir
 			
 			jal DrawAgent
+			
+			lw $a0, enemy6PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy6PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy6State			
+			
+			jal DrawPoint
 			
 			j TryMoveAgentDone
 				
@@ -4186,6 +4532,16 @@ TryMoveAgent:
 			lw $a2, enemy6Dir
 			
 			jal EraseAgent
+			
+			lw $a0, enemy6PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy6PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
 				
 			# Make the test to see if there is collision
 			li $a0, 6 # the enemy 6
@@ -4205,6 +4561,16 @@ TryMoveAgent:
 			lw $a3, enemy6Dir
 			
 			jal DrawAgent
+			
+			lw $a0, enemy6PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy6PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy6State			
+			
+			jal DrawPoint
 			
 			j TryMoveAgentDone
 				
@@ -4232,6 +4598,16 @@ TryMoveAgent:
 			
 			jal EraseAgent
 			
+			lw $a0, enemy6PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy6PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, backgroundColor			
+			
+			jal DrawPoint
+			
 			# Make the test to see if there is collision
 			li $a0, 6 # the enemy 6
 			li $a1, 0 # requiered for recursion
@@ -4250,6 +4626,16 @@ TryMoveAgent:
 			lw $a3, enemy6Dir
 			
 			jal DrawAgent
+			
+			lw $a0, enemy6PosX
+			srl $a0, $a0, 1
+			addi $a0, $a0, 17			
+			lw $a1, enemy6PosY
+			srl $a1, $a1, 1
+			addi $a1, $a1, 43
+			lw $a2, enemy6State			
+			
+			jal DrawPoint
 			
 			j TryMoveAgentDone
 				
