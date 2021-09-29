@@ -75,6 +75,8 @@
 	enemy6Dir: 		.word 0x00000003
 	enemy6State:		.word 0x00ff00e6 # Pink
 	enemy6Active:		.word 1
+	
+	rounds:			.word 1
 
 .text
 
@@ -1219,14 +1221,41 @@ Standby:
 		
 			lw $t0, enemy6Active
 		
-			bne $t0, 1, Continue 
+			bne $t0, 1, CheckNewRound 
 			
 			li $a0, 6
 			lw $a1, enemy6Dir
 		
 			jal MoveAgent
 			
-	# CheckNewRound:
+	CheckNewRound:
+		
+		lw $t0, playerScoreNumber
+		
+		bne $t0, 6, CheckEndGame
+		
+		li $t0, 0
+		
+		sw $t0, playerScoreNumber
+		
+		lw $t0, rounds
+		
+		addi $t0, $t0, 1
+		
+		sw $t0, rounds
+		
+		li $s3, 0
+		
+		li $s5, 0
+		
+		lw $a0, playerPosX
+		
+		lw $a1, playerPosY
+		
+		jal EraseCompleteAgent
+		
+		j NewRound
+		
 						
 	CheckEndGame:
 	
@@ -6017,10 +6046,10 @@ EndGame:
 		
 	# PlayerScore
 	li $t0, 0
-	sw $t0, playerBulletActive
+	sw $t0, playerScoreNumber
 	
 	li $t0, 14
-	sw $t0,playerScorePosX
+	sw $t0, playerScorePosX
 	
 	li $t0, 39
 	sw $t0, playerScorePosY
@@ -6127,6 +6156,144 @@ EndGame:
 	j NewGame
 		
 
+NewRound:
+	# Player
+	li $t0, 9
+	sw $t0, playerPosX
+	
+	li $t0, 2
+	sw $t0,playerPosY
+	
+	li $t0, 3
+	sw $t0, playerDir
+	
+	li $t0, 0x00ffc800
+	sw $t0, playerState
+	
+	li $t0, 1
+	sw $t0, playerActive
+
+	# PlayerBullet	
+	li $t0, 0
+	sw $t0, playerBulletActive
+	
+	li $t0, 0
+	sw $t0,playerBulletPosX
+	
+	li $t0, 0
+	sw $t0, playerBulletPosY
+	
+	li $t0, 0
+	sw $t0, playerBulletDir
+	
+	li $t0, 0x00ffffff
+	sw $t0, playerBulletState
+	
+	
+	# Enemy 1
+	li $t0, 53
+	sw $t0, enemy1PosX
+	
+	li $t0, 2
+	sw $t0, enemy1PosY
+	
+	li $t0, 2
+	sw $t0, enemy1Dir
+	
+	li $t0, 0x00fc0303 # Red
+	sw $t0, enemy1State
+	
+	li $t0, 1
+	sw $t0, enemy1Active
+		
+	# Enemy 2
+	li $t0, 53
+	sw $t0, enemy2PosX
+	
+	li $t0, 20
+	sw $t0, enemy2PosY
+	
+	li $t0, 2
+	sw $t0, enemy2Dir
+	
+	li $t0, 0x00ff6f00 # Orange
+	sw $t0, enemy2State
+	
+	li $t0, 1
+	sw $t0, enemy2Active
+	
+	# Enemy 3
+	li $t0, 19
+	sw $t0, enemy3PosX
+	
+	li $t0, 32
+	sw $t0, enemy3PosY
+	
+	li $t0, 0
+	sw $t0, enemy3Dir
+	
+	li $t0, 0x0011ff00 # Green
+	sw $t0, enemy3State
+	
+	li $t0, 1
+	sw $t0, enemy3Active
+	
+	# Enemy 4
+	li $t0, 31
+	sw $t0, enemy4PosX
+	
+	li $t0, 32
+	sw $t0, enemy4PosY
+	
+	li $t0, 0
+	sw $t0, enemy4Dir
+	
+	li $t0, 0x0000e5ff # Light blue
+	sw $t0, enemy4State
+	
+	li $t0, 1
+	sw $t0, enemy4Active
+	
+	# Enemy 5
+	li $t0, 43
+	sw $t0, enemy5PosX
+	
+	li $t0, 32
+	sw $t0, enemy5PosY
+	
+	li $t0, 0
+	sw $t0, enemy5Dir
+	
+	li $t0, 0x007700ff # Purple
+	sw $t0, enemy5State
+	
+	li $t0, 1
+	sw $t0, enemy5Active
+	
+	# Enemy 6
+	li $t0, 9
+	sw $t0, enemy6PosX
+	
+	li $t0, 20
+	sw $t0, enemy6PosY
+	
+	li $t0, 3
+	sw $t0, enemy6Dir
+	
+	li $t0, 0x00ff00e6 # Pink
+	sw $t0, enemy6State
+	
+	li $t0, 1
+	sw $t0, enemy6Active
+	
+	lw $a0, playerPosX
+	lw $a1, playerPosY
+	lw $a2, playerState
+	lw $a3, playerDir
+	
+	jal DrawAgent
+	
+	j Begin_standby
 		
 		
 		
