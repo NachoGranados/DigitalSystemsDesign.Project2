@@ -12,12 +12,12 @@
 	# 5 is the enemy 5
 	# 6 is the enemy 6
 	# 7 is the player bullet
-	agent:			.word 0 # 0x00000000
+	agent:			.word 0
 	
 	# Player
 	playerPosX:		.word 9
 	playerPosY:		.word 2
-	playerDir: 		.word 3 # 0x00000003
+	playerDir: 		.word 3
 	playerState:		.word 0x00ffc800
 	playerActive:		.word 1
 	
@@ -37,21 +37,21 @@
 	# Enemy 1
 	enemy1PosX:		.word 53
 	enemy1PosY:		.word 2
-	enemy1Dir: 		.word 2 # 0x00000002
+	enemy1Dir: 		.word 2 
 	enemy1State:		.word 0x00fc0303 # Red
 	enemy1Active:		.word 1
 	
 	# Enemy 2
 	enemy2PosX:		.word 53
 	enemy2PosY:		.word 20
-	enemy2Dir: 		.word 2 # 0x00000002
+	enemy2Dir: 		.word 2
 	enemy2State:		.word 0x00ff6f00 # Orange
 	enemy2Active:		.word 1
 	
 	# Enemy 3
 	enemy3PosX:		.word 19
 	enemy3PosY:		.word 32
-	enemy3Dir: 		.word 0 # 0x00000000
+	enemy3Dir: 		.word 0
 	enemy3State:		.word 0x0011ff00 # Green
 	enemy3Active:		.word 1
 	
@@ -1158,7 +1158,7 @@ Standby:
 		
 	EnemiesMovement:
 		
-		bne $s5, $s6, CheckEndGame
+		bne $s5, $s6, CheckWinGame
 	
 		li $s5, 0
 				
@@ -1221,12 +1221,20 @@ Standby:
 		
 			lw $t0, enemy6Active
 		
-			bne $t0, 1, CheckNewRound 
+			bne $t0, 1, CheckWinGame 
 			
 			li $a0, 6
 			lw $a1, enemy6Dir
 		
 			jal MoveAgent
+			
+	CheckWinGame:
+	
+		lw $t0, rounds
+		
+		bne $t0, 4, CheckNewRound
+		
+		j EndGame
 			
 	CheckNewRound:
 		
@@ -1234,29 +1242,23 @@ Standby:
 		
 		bne $t0, 6, CheckEndGame
 		
-		li $t0, 0
-		
+		li $t0, 0		
 		sw $t0, playerScoreNumber
 		
-		lw $t0, rounds
-		
-		addi $t0, $t0, 1
-		
+		lw $t0, rounds	
+		addi $t0, $t0, 1		
 		sw $t0, rounds
 		
-		li $s3, 0
-		
+		li $s3, 0		
 		li $s5, 0
 		
-		lw $a0, playerPosX
-		
+		lw $a0, playerPosX		
 		lw $a1, playerPosY
 		
 		jal EraseCompleteAgent
 		
 		j NewRound
-		
-						
+								
 	CheckEndGame:
 	
 		lw $t0, playerActive
@@ -6153,10 +6155,14 @@ EndGame:
 	li $t0, 1
 	sw $t0, enemy6Active
 	
+	li $t0, 1
+	sw $t0, rounds
+	
 	j NewGame
 		
 
 NewRound:
+
 	# Player
 	li $t0, 9
 	sw $t0, playerPosX
@@ -6187,8 +6193,7 @@ NewRound:
 	sw $t0, playerBulletDir
 	
 	li $t0, 0x00ffffff
-	sw $t0, playerBulletState
-	
+	sw $t0, playerBulletState	
 	
 	# Enemy 1
 	li $t0, 53
@@ -6286,6 +6291,7 @@ NewRound:
 	li $t0, 1
 	sw $t0, enemy6Active
 	
+	# Draw player						
 	lw $a0, playerPosX
 	lw $a1, playerPosY
 	lw $a2, playerState
@@ -6293,29 +6299,53 @@ NewRound:
 	
 	jal DrawAgent
 	
+	# Draw enemy1			
+	lw $a0, enemy1PosX
+	lw $a1, enemy1PosY
+	lw $a2, enemy1State
+	lw $a3, enemy1Dir
+	
+	jal DrawAgent
+	
+	# Draw enemy2			
+	lw $a0, enemy2PosX
+	lw $a1, enemy2PosY
+	lw $a2, enemy2State
+	lw $a3, enemy2Dir
+	
+	jal DrawAgent
+	
+	# Draw enemy3		
+	lw $a0, enemy3PosX
+	lw $a1, enemy3PosY
+	lw $a2, enemy3State
+	lw $a3, enemy3Dir
+	
+	jal DrawAgent
+	
+	# Draw enemy4			
+	lw $a0, enemy4PosX
+	lw $a1, enemy4PosY
+	lw $a2, enemy4State
+	lw $a3, enemy4Dir
+	
+	jal DrawAgent
+	
+	# Draw enemy5		
+	lw $a0, enemy5PosX
+	lw $a1, enemy5PosY
+	lw $a2, enemy5State
+	lw $a3, enemy5Dir
+	
+	jal DrawAgent
+	
+	# Draw enemy6
+	lw $a0, enemy6PosX
+	lw $a1, enemy6PosY
+	lw $a2, enemy6State
+	lw $a3, enemy6Dir
+	
+	jal DrawAgent
+	
 	j Begin_standby
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
