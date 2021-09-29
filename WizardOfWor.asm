@@ -12,12 +12,12 @@
 	# 5 is the enemy 5
 	# 6 is the enemy 6
 	# 7 is the player bullet
-	agent:			.word 0x00000000
+	agent:			.word 0 # 0x00000000
 	
 	# Player
 	playerPosX:		.word 9
 	playerPosY:		.word 2
-	playerDir: 		.word 0x00000003
+	playerDir: 		.word 3 # 0x00000003
 	playerState:		.word 0x00ffc800
 	playerActive:		.word 1
 	
@@ -37,21 +37,21 @@
 	# Enemy 1
 	enemy1PosX:		.word 53
 	enemy1PosY:		.word 2
-	enemy1Dir: 		.word 0x00000002
+	enemy1Dir: 		.word 2 # 0x00000002
 	enemy1State:		.word 0x00fc0303 # Red
 	enemy1Active:		.word 1
 	
 	# Enemy 2
 	enemy2PosX:		.word 53
 	enemy2PosY:		.word 20
-	enemy2Dir: 		.word 0x00000002
+	enemy2Dir: 		.word 2 # 0x00000002
 	enemy2State:		.word 0x00ff6f00 # Orange
 	enemy2Active:		.word 1
 	
 	# Enemy 3
 	enemy3PosX:		.word 19
 	enemy3PosY:		.word 32
-	enemy3Dir: 		.word 0x00000000
+	enemy3Dir: 		.word 0 # 0x00000000
 	enemy3State:		.word 0x0011ff00 # Green
 	enemy3Active:		.word 1
 	
@@ -1252,7 +1252,7 @@ Standby:
 		
 	EnemiesMovement:
 		
-		bne $s5, $s6, Continue
+		bne $s5, $s6, CheckEndGame
 	
 		li $s5, 0
 				
@@ -1321,9 +1321,17 @@ Standby:
 			lw $a1, enemy6Dir
 		
 			jal MoveAgent
+						
+	CheckEndGame:
+	
+		lw $t0, playerActive
+		
+		bne $t0, 0, Continue
+		
+		j EndGame
 		
 	Continue:
-		
+	
 		lw $t1, 0xFFFF0000		# check to see if a key has been pressed
 		blez $t1, Standby
 				
@@ -4698,11 +4706,31 @@ CollisionDirection:
 		
 			jal LoadColor
 			
-			beq $v0, 0, Pixel1Up
-						
-			li $v0, 1
+			Pixel0UpPlayer:
 			
-			j CollDone
+				lw $t0, playerState
+				
+				bne $v0, $t0, Pixel0UpOther	
+				
+				li $t0, 0
+				sw $t0, playerActive
+				
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				
+				jal EraseCompleteAgent
+				
+				li $v0, 0
+			
+				j CollDone		
+			
+			Pixel0UpOther:
+			
+				beq $v0, 0, Pixel1Up
+						
+				li $v0, 1
+			
+				j CollDone
 			
 		Pixel1Up:
 		
@@ -4710,11 +4738,31 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel2Up
-						
-			li $v0, 1
+			Pixel1UpPlayer:
 			
-			j CollDone
+				lw $t0, playerState
+				
+				bne $v0, $t0, Pixel1UpOther	
+				
+				li $t0, 0
+				sw $t0, playerActive
+				
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				
+				jal EraseCompleteAgent
+				
+				li $v0, 0
+			
+				j CollDone		
+			
+			Pixel1UpOther:
+			
+				beq $v0, 0, Pixel2Up
+						
+				li $v0, 1
+			
+				j CollDone
 			
 		Pixel2Up:
 		
@@ -4722,11 +4770,31 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel3Up
-					
-			li $v0, 1
+			Pixel2UpPlayer:
 			
-			j CollDone
+				lw $t0, playerState
+				
+				bne $v0, $t0, Pixel2UpOther	
+				
+				li $t0, 0
+				sw $t0, playerActive
+				
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				
+				jal EraseCompleteAgent
+				
+				li $v0, 0
+			
+				j CollDone		
+			
+			Pixel2UpOther:
+			
+				beq $v0, 0, Pixel3Up
+					
+				li $v0, 1
+			
+				j CollDone
 			
 		Pixel3Up: 
 		
@@ -4734,11 +4802,31 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel4Up	
-					
-			li $v0, 1
+			Pixel3UpPlayer:
 			
-			j CollDone
+				lw $t0, playerState
+				
+				bne $v0, $t0, Pixel3UpOther	
+				
+				li $t0, 0
+				sw $t0, playerActive
+				
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				
+				jal EraseCompleteAgent
+				
+				li $v0, 0
+			
+				j CollDone		
+			
+			Pixel3UpOther:
+			
+				beq $v0, 0, Pixel4Up	
+						
+				li $v0, 1
+			
+				j CollDone
 			
 		Pixel4Up: 
 		
@@ -4746,11 +4834,31 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, NoCollUp	
-					
-			li $v0, 1
+			Pixel4UpPlayer:
 			
-			j CollDone
+				lw $t0, playerState
+				
+				bne $v0, $t0, Pixel4UpOther	
+				
+				li $t0, 0
+				sw $t0, playerActive
+				
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				
+				jal EraseCompleteAgent
+				
+				li $v0, 0
+			
+				j CollDone		
+			
+			Pixel4UpOther:
+			
+				beq $v0, 0, NoCollUp	
+					
+				li $v0, 1
+			
+				j CollDone
 			
 		NoCollUp:
 		
@@ -4770,6 +4878,26 @@ CollisionDirection:
 		
 			jal LoadColor
 			
+			Pixel0DownPlayer:
+			
+				lw $t0, playerState
+				
+				bne $v0, $t0, Pixel0DownOther	
+				
+				li $t0, 0
+				sw $t0, playerActive
+				
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				
+				jal EraseCompleteAgent
+				
+				li $v0, 0
+			
+				j CollDone		
+			
+			Pixel0DownOther:
+			
 			beq $v0, 0, Pixel1Down	
 					
 			li $v0, 1
@@ -4782,11 +4910,31 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel2Down	
-					
-			li $v0, 1
+			Pixel1DownPlayer:
 			
-			j CollDone
+				lw $t0, playerState
+				
+				bne $v0, $t0, Pixel1DownOther	
+				
+				li $t0, 0
+				sw $t0, playerActive
+				
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				
+				jal EraseCompleteAgent
+				
+				li $v0, 0
+			
+				j CollDone		
+			
+			Pixel1DownOther:
+			
+				beq $v0, 0, Pixel2Down	
+					
+				li $v0, 1
+			
+				j CollDone
 			
 		Pixel2Down:
 		
@@ -4794,11 +4942,31 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel3Down	
-					
-			li $v0, 1
+			Pixel2DownPlayer:
 			
-			j CollDone
+				lw $t0, playerState
+				
+				bne $v0, $t0, Pixel2DownOther	
+				
+				li $t0, 0
+				sw $t0, playerActive
+				
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				
+				jal EraseCompleteAgent
+				
+				li $v0, 0
+			
+				j CollDone		
+			
+			Pixel2DownOther:
+			
+				beq $v0, 0, Pixel3Down	
+					
+				li $v0, 1
+			
+				j CollDone
 			
 		Pixel3Down: 
 		
@@ -4806,11 +4974,31 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel4Down	
-					
-			li $v0, 1
+			Pixel3DownPlayer:
 			
-			j CollDone
+				lw $t0, playerState
+				
+				bne $v0, $t0, Pixel3DownOther	
+				
+				li $t0, 0
+				sw $t0, playerActive
+				
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				
+				jal EraseCompleteAgent
+				
+				li $v0, 0
+			
+				j CollDone		
+			
+			Pixel3DownOther:
+			
+				beq $v0, 0, Pixel4Down	
+					
+				li $v0, 1
+			
+				j CollDone
 			
 		Pixel4Down: 
 		
@@ -4818,11 +5006,31 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, NoCollDown	
-					
-			li $v0, 1
+			Pixel4DownPlayer:
 			
-			j CollDone
+				lw $t0, playerState
+				
+				bne $v0, $t0, Pixel4DownOther	
+				
+				li $t0, 0
+				sw $t0, playerActive
+				
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				
+				jal EraseCompleteAgent
+				
+				li $v0, 0
+			
+				j CollDone		
+			
+			Pixel4DownOther:
+			
+				beq $v0, 0, NoCollDown	
+					
+				li $v0, 1
+			
+				j CollDone
 			
 		NoCollDown:
 		
@@ -4837,16 +5045,34 @@ CollisionDirection:
 		addi $a0, $a0, -2 # ajust the coordinate for left
 		
 		Pixel0Left:
-		
-			addi $a1, $a1, -1
-		
+					
 			jal LoadColor
 			
-			beq $v0, 0, Pixel1Left	
-					
-			li $v0, 1
+			Pixel0LeftPlayer:
 			
-			j CollDone
+				lw $t0, playerState
+				
+				bne $v0, $t0, Pixel0LeftOther	
+				
+				li $t0, 0
+				sw $t0, playerActive
+				
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				
+				jal EraseCompleteAgent
+				
+				li $v0, 0
+			
+				j CollDone		
+			
+			Pixel0LeftOther:
+						
+				beq $v0, 0, Pixel1Left	
+				
+				li $v0, 1
+			
+				j CollDone
 			
 		Pixel1Left:
 		
@@ -4854,11 +5080,31 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel2Left	
-					
-			li $v0, 1
+			Pixel1LeftPlayer:
 			
-			j CollDone
+				lw $t0, playerState
+				
+				bne $v0, $t0, Pixel1LeftOther	
+				
+				li $t0, 0
+				sw $t0, playerActive
+				
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				
+				jal EraseCompleteAgent
+				
+				li $v0, 0
+			
+				j CollDone		
+			
+			Pixel1LeftOther:
+			
+				beq $v0, 0, Pixel2Left	
+					
+				li $v0, 1
+			
+				j CollDone
 			
 		Pixel2Left:
 		
@@ -4866,11 +5112,31 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel3Left	
-					
-			li $v0, 1
+			Pixel2LeftPlayer:
 			
-			j CollDone
+				lw $t0, playerState
+				
+				bne $v0, $t0, Pixel2LeftOther	
+				
+				li $t0, 0
+				sw $t0, playerActive
+				
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				
+				jal EraseCompleteAgent
+				
+				li $v0, 0
+			
+				j CollDone		
+			
+			Pixel2LeftOther:
+					
+				beq $v0, 0, Pixel3Left	
+					
+				li $v0, 1
+			
+				j CollDone
 			
 		Pixel3Left: 
 		
@@ -4878,23 +5144,31 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel4Left	
+			Pixel3LeftPlayer:
+			
+				lw $t0, playerState
+				
+				bne $v0, $t0, Pixel3LeftOther	
+				
+				li $t0, 0
+				sw $t0, playerActive
+				
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				
+				jal EraseCompleteAgent
+				
+				li $v0, 0
+			
+				j CollDone		
+			
+			Pixel3LeftOther:
+			
+				beq $v0, 0, NoCollLeft	
 					
-			li $v0, 1
+				li $v0, 1
 			
-			j CollDone
-			
-		Pixel4Left: 
-		
-			addi $a1, $a1, 1
-			
-			jal LoadColor
-			
-			beq $v0, 0, NoCollLeft	
-					
-			li $v0, 1
-			
-			j CollDone
+				j CollDone
 			
 		NoCollLeft:
 		
@@ -4909,16 +5183,34 @@ CollisionDirection:
 		addi $a0, $a0, 4 # ajust the coordinate for right
 		
 		Pixel0Right:
-		
-			addi $a1, $a1, -1
-		
+				
 			jal LoadColor
 			
-			beq $v0, 0, Pixel1Right		
-				
-			li $v0, 1
+			Pixel0RightPlayer:
 			
-			j CollDone
+				lw $t0, playerState
+				
+				bne $v0, $t0, Pixel0RightOther	
+				
+				li $t0, 0
+				sw $t0, playerActive
+				
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				
+				jal EraseCompleteAgent
+				
+				li $v0, 0
+			
+				j CollDone		
+			
+			Pixel0RightOther:
+			
+				beq $v0, 0, Pixel1Right		
+				
+				li $v0, 1
+			
+				j CollDone
 			
 		Pixel1Right:
 		
@@ -4926,11 +5218,31 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel2Right		
-				
-			li $v0, 1
+			Pixel1RightPlayer:
 			
-			j CollDone
+				lw $t0, playerState
+				
+				bne $v0, $t0, Pixel1RightOther	
+				
+				li $t0, 0
+				sw $t0, playerActive
+				
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				
+				jal EraseCompleteAgent
+				
+				li $v0, 0
+			
+				j CollDone		
+			
+			Pixel1RightOther:
+			
+				beq $v0, 0, Pixel2Right		
+				
+				li $v0, 1
+			
+				j CollDone
 			
 		Pixel2Right:
 		
@@ -4938,11 +5250,31 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel3Right	
-					
-			li $v0, 1
+			Pixel2RightPlayer:
 			
-			j CollDone
+				lw $t0, playerState
+				
+				bne $v0, $t0, Pixel2RightOther	
+				
+				li $t0, 0
+				sw $t0, playerActive
+				
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				
+				jal EraseCompleteAgent
+				
+				li $v0, 0
+			
+				j CollDone		
+			
+			Pixel2RightOther:
+			
+				beq $v0, 0, Pixel3Right	
+					
+				li $v0, 1
+			
+				j CollDone
 			
 		Pixel3Right: 
 		
@@ -4950,23 +5282,31 @@ CollisionDirection:
 			
 			jal LoadColor
 			
-			beq $v0, 0, Pixel4Right	
+			Pixel3RightPlayer:
+			
+				lw $t0, playerState
+				
+				bne $v0, $t0, Pixel3RightOther	
+				
+				li $t0, 0
+				sw $t0, playerActive
+				
+				lw $a0, playerPosX
+				lw $a1, playerPosY
+				
+				jal EraseCompleteAgent
+				
+				li $v0, 0
+			
+				j CollDone		
+			
+			Pixel3RightOther:
+			
+				beq $v0, 0, NoCollRight	
 					
-			li $v0, 1
+				li $v0, 1
 			
-			j CollDone
-			
-		Pixel4Right: 
-		
-			addi $a1, $a1, 1
-			
-			jal LoadColor
-			
-			beq $v0, 0, NoCollRight	
-					
-			li $v0, 1
-			
-			j CollDone
+				j CollDone
 			
 		NoCollRight:
 		
@@ -5015,7 +5355,150 @@ ClearBoard:
 		jr $ra	
 		
 		
+EndGame:
+
+	# Player
+	li $t0, 9
+	sw $t0, playerPosX
+	
+	li $t0, 2
+	sw $t0,playerPosY
+	
+	li $t0, 3
+	sw $t0, playerDir
+	
+	li $t0, 0x00ffc800
+	sw $t0, playerState
+	
+	li $t0, 1
+	sw $t0, playerActive
+
+	# PlayerBullet	
+	li $t0, 0
+	sw $t0, playerBulletActive
+	
+	li $t0, 0
+	sw $t0,playerBulletPosX
+	
+	li $t0, 0
+	sw $t0, playerBulletPosY
+	
+	li $t0, 0
+	sw $t0, playerBulletDir
+	
+	li $t0, 0x00ffffff
+	sw $t0, playerBulletState
 		
+	# PlayerScore
+	li $t0, 0
+	sw $t0, playerBulletActive
+	
+	li $t0, 14
+	sw $t0,playerScorePosX
+	
+	li $t0, 39
+	sw $t0, playerScorePosY
+	
+	li $t0, 0x00ffffff
+	sw $t0, playerScoreState
+	
+	# Enemy 1
+	li $t0, 53
+	sw $t0, enemy1PosX
+	
+	li $t0, 2
+	sw $t0, enemy1PosY
+	
+	li $t0, 2
+	sw $t0, enemy1Dir
+	
+	li $t0, 0x00fc0303 # Red
+	sw $t0, enemy1State
+	
+	li $t0, 1
+	sw $t0, enemy1Active
+		
+	# Enemy 2
+	li $t0, 53
+	sw $t0, enemy2PosX
+	
+	li $t0, 20
+	sw $t0, enemy2PosY
+	
+	li $t0, 2
+	sw $t0, enemy2Dir
+	
+	li $t0, 0x00ff6f00 # Orange
+	sw $t0, enemy2State
+	
+	li $t0, 1
+	sw $t0, enemy2Active
+	
+	# Enemy 3
+	li $t0, 19
+	sw $t0, enemy3PosX
+	
+	li $t0, 32
+	sw $t0, enemy3PosY
+	
+	li $t0, 0
+	sw $t0, enemy3Dir
+	
+	li $t0, 0x0011ff00 # Green
+	sw $t0, enemy3State
+	
+	li $t0, 1
+	sw $t0, enemy3Active
+	
+	# Enemy 4
+	li $t0, 31
+	sw $t0, enemy4PosX
+	
+	li $t0, 32
+	sw $t0, enemy4PosY
+	
+	li $t0, 0
+	sw $t0, enemy4Dir
+	
+	li $t0, 0x0000e5ff # Light blue
+	sw $t0, enemy4State
+	
+	li $t0, 1
+	sw $t0, enemy4Active
+	
+	# Enemy 5
+	li $t0, 43
+	sw $t0, enemy5PosX
+	
+	li $t0, 32
+	sw $t0, enemy5PosY
+	
+	li $t0, 0
+	sw $t0, enemy5Dir
+	
+	li $t0, 0x007700ff # Purple
+	sw $t0, enemy5State
+	
+	li $t0, 1
+	sw $t0, enemy5Active
+	
+	# Enemy 6
+	li $t0, 9
+	sw $t0, enemy6PosX
+	
+	li $t0, 20
+	sw $t0, enemy6PosY
+	
+	li $t0, 3
+	sw $t0, enemy6Dir
+	
+	li $t0, 0x00ff00e6 # Pink
+	sw $t0, enemy6State
+	
+	li $t0, 1
+	sw $t0, enemy6Active
+	
+	j NewGame
 		
 
 		
