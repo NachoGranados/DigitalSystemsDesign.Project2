@@ -1487,6 +1487,16 @@ MoveBullets:
 					
 					jal EraseCompleteAgent
 					
+					lw $a0, enemy1PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy1PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor			
+			
+					jal DrawPoint
+					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
 					lw $a2, playerScoreState
@@ -1530,6 +1540,16 @@ MoveBullets:
 					lw $a1, enemy2PosY
 					
 					jal EraseCompleteAgent
+					
+					lw $a0, enemy2PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy2PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
 					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
@@ -1575,6 +1595,16 @@ MoveBullets:
 					
 					jal EraseCompleteAgent
 					
+					lw $a0, enemy3PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy3PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
+					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
 					lw $a2, playerScoreState
@@ -1618,6 +1648,16 @@ MoveBullets:
 					lw $a1, enemy4PosY
 					
 					jal EraseCompleteAgent
+					
+					lw $a0, enemy4PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy4PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
 					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
@@ -1663,6 +1703,16 @@ MoveBullets:
 					
 					jal EraseCompleteAgent
 					
+					lw $a0, enemy5PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy5PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
+					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
 					lw $a2, playerScoreState
@@ -1706,6 +1756,16 @@ MoveBullets:
 					lw $a1, enemy6PosY
 					
 					jal EraseCompleteAgent
+					
+					lw $a0, enemy6PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy6PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor
+					
+					jal DrawPoint
 					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
@@ -1801,6 +1861,16 @@ MoveBullets:
 					
 					jal EraseCompleteAgent
 					
+					lw $a0, enemy1PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy1PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor
+					
+					jal DrawPoint
+					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
 					lw $a2, playerScoreState
@@ -1844,6 +1914,16 @@ MoveBullets:
 					lw $a1, enemy2PosY
 					
 					jal EraseCompleteAgent
+					
+					lw $a0, enemy2PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy2PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
 					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
@@ -1889,6 +1969,16 @@ MoveBullets:
 					
 					jal EraseCompleteAgent
 					
+					lw $a0, enemy3PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy3PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
+					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
 					lw $a2, playerScoreState
@@ -1932,6 +2022,16 @@ MoveBullets:
 					lw $a1, enemy4PosY
 					
 					jal EraseCompleteAgent
+					
+					lw $a0, enemy4PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy4PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
 					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
@@ -1977,6 +2077,16 @@ MoveBullets:
 					
 					jal EraseCompleteAgent
 					
+					lw $a0, enemy5PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy5PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
+					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
 					lw $a2, playerScoreState
@@ -2020,6 +2130,16 @@ MoveBullets:
 					lw $a1, enemy6PosY
 					
 					jal EraseCompleteAgent
+					
+					lw $a0, enemy6PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy6PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
 					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
@@ -2115,6 +2235,16 @@ MoveBullets:
 					
 					jal EraseCompleteAgent
 					
+					lw $a0, enemy1PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy1PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
+					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
 					lw $a2, playerScoreState
@@ -2158,6 +2288,16 @@ MoveBullets:
 					lw $a1, enemy2PosY
 					
 					jal EraseCompleteAgent
+					
+					lw $a0, enemy2PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy2PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
 					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
@@ -2203,6 +2343,16 @@ MoveBullets:
 					
 					jal EraseCompleteAgent
 					
+					lw $a0, enemy3PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy3PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
+					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
 					lw $a2, playerScoreState
@@ -2246,6 +2396,16 @@ MoveBullets:
 					lw $a1, enemy4PosY
 					
 					jal EraseCompleteAgent
+					
+					lw $a0, enemy4PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy4PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
 					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
@@ -2291,6 +2451,16 @@ MoveBullets:
 					
 					jal EraseCompleteAgent
 					
+					lw $a0, enemy5PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy5PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
+					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
 					lw $a2, playerScoreState
@@ -2334,6 +2504,16 @@ MoveBullets:
 					lw $a1, enemy6PosY
 					
 					jal EraseCompleteAgent
+					
+					lw $a0, enemy6PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy6PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
 					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
@@ -2429,6 +2609,16 @@ MoveBullets:
 					
 					jal EraseCompleteAgent
 					
+					lw $a0, enemy1PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy1PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
+					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
 					lw $a2, playerScoreState
@@ -2472,6 +2662,16 @@ MoveBullets:
 					lw $a1, enemy2PosY
 					
 					jal EraseCompleteAgent
+					
+					lw $a0, enemy2PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy2PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
 					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
@@ -2517,6 +2717,16 @@ MoveBullets:
 					
 					jal EraseCompleteAgent
 					
+					lw $a0, enemy3PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy3PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
+					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
 					lw $a2, playerScoreState
@@ -2560,6 +2770,16 @@ MoveBullets:
 					lw $a1, enemy4PosY
 					
 					jal EraseCompleteAgent
+					
+					lw $a0, enemy4PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy4PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
 					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
@@ -2605,6 +2825,16 @@ MoveBullets:
 					
 					jal EraseCompleteAgent
 					
+					lw $a0, enemy5PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy5PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
+					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
 					lw $a2, playerScoreState
@@ -2648,6 +2878,16 @@ MoveBullets:
 					lw $a1, enemy6PosY
 					
 					jal EraseCompleteAgent
+					
+					lw $a0, enemy6PosX
+					srl $a0, $a0, 1
+					addi $a0, $a0, 17			
+					lw $a1, enemy6PosY
+					srl $a1, $a1, 1
+					addi $a1, $a1, 43
+					lw $a2, backgroundColor	
+					
+					jal DrawPoint
 					
 					lw $a0, playerScorePosX
 					lw $a1, playerScorePosY
